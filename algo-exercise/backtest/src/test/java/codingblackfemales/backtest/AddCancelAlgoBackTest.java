@@ -45,7 +45,7 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
         container = new AlgoContainer(new MarketDataService(runTrigger), new OrderService(runTrigger), runTrigger, actioner);
         //set my algo logic
         container.setLogic(new AddCancelAlgoLogic());
-
+        // AddCancelAlgoLogic - what I have to write
         network.addConsumer(new LoggingConsumer());
         network.addConsumer(book);
         network.addConsumer(container.getMarketDataService());
@@ -59,7 +59,7 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
     private UnsafeBuffer createSampleMarketDataTick(){
         final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
         final UnsafeBuffer directBuffer = new UnsafeBuffer(byteBuffer);
-
+    // MarketDataTick : update for the market data
         //write the encoded output to the direct buffer
         encoder.wrapAndApplyHeader(directBuffer, 0, headerEncoder);
 
@@ -72,12 +72,14 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
                 .next().price(98L).size(100L)
                 .next().price(95L).size(200L)
                 .next().price(91L).size(300L);
+        // JB: buyers : ofter offer less than sellers
 
         encoder.askBookCount(4)
                 .next().price(100L).size(101L)
                 .next().price(110L).size(200L)
                 .next().price(115L).size(5000L)
                 .next().price(119L).size(5600L);
+        // sellers
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 

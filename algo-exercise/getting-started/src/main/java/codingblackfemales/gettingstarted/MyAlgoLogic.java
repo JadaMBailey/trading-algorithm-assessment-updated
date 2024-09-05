@@ -19,6 +19,8 @@ public class MyAlgoLogic implements AlgoLogic {
 
         logger.info("[MYALGO] The state of the order book is:\n" + orderBookAsString);
 
+
+
         /********
          *
          * Add your logic here....
