@@ -25,7 +25,13 @@ Note: make sure you think about how the market data could change over time, add 
 5. You're ready to go!
 
 #### Note
-You will need to run the Maven `compile` task to make sure the binary encoders and decoders are created. You can use the provided Maven wrapper or an installed instance of Maven, either in the command line or from the IDE integration. To use the wrapper, run the following command from the project root: `./mvnw compile --projects algo-exercise/getting-started`.
+You will first need to run the Maven `install` task to make sure the binary encoders and decoders are installed and available for use. You can use the provided Maven wrapper or an installed instance of Maven, either in the command line or from the IDE integration.
+
+To get started, run the following command from the project root: `./mvnw clean install`. Once you've done this, you can compile or test specific projects using the `--projects` flag, e.g.:
+
+- Clean all projects: `./mvnw clean`
+- Test all `algo-exercise` projects: `./mvnw test --projects algo-exercise`
+- Compile the `getting-started` project only: `./mvnw compile --projects algo-exercise/getting-started`
 
 ### Writing Your Algo
 
@@ -50,17 +56,17 @@ https://github.com/cbfacademy/trading-algorithm-assessment/blob/main/algo-exerci
 
 ### An Overview of the Backtesting Infra
 
-The back testing infrastructure allows you, from within a unit test, to write an algo that adds or removes orders into an order book. When your orders go onto the orer book, if they can't match immediately (i.e. the price is too passive) the order book will send a market data update showing the new order book with your quantity in it. Your algo can then see that market data update and respond to it. 
+The back testing infrastructure allows you, from within a unit test, to write an algo that adds or removes orders into an order book. When your orders go onto the order book, if they can't match immediately (i.e. the price is too passive) the order book will send a market data update showing the new order book with your quantity in it. Your algo can then see that market data update and respond to it. 
 
 When you are writing scenarios to see how the algo would behave you can inject new market data by creating copies of the tick() method and changing the price or quantity values it submits. 
 
 There is one example in the test provided already: 
 
-https://github.com/cbfacademy/trading-algorithm-assessment/blob/ec5bbff1a3d4ed07eddaae5a8fcca928ad5c56f4/algo-exercise/getting-started/src/test/java/codingblackfemales/gettingstarted/MyAlgoTest.java#L27-L33
+https://github.com/cbfacademy/trading-algorithm-assessment/blob/main/algo-exercise/getting-started/src/test/java/codingblackfemales/gettingstarted/MyAlgoTest.java#L27-L33
 
 The below diagram shows the message flows across the infrastructure. If you look at the [AbstractAlgoBackTest.java](https://github.com/cbfacademy/trading-algorithm-assessment/blob/main/algo-exercise/getting-started/src/test/java/codingblackfemales/gettingstarted/AbstractAlgoBackTest.java) you can see how this is wired together for you behind the scenes. 
 
-![cbf-graphics-overview](https://github.com/cbfacademy/trading-algorithm-assessment/blob/bf3d0b48332f5f8faa23f2922d4087e319225bc2/algo-exercise/256759741-f9a27f2a-5c9b-4b9e-bbea-762a6a144868.png)
+![cbf-graphics-overview](256759741-f9a27f2a-5c9b-4b9e-bbea-762a6a144868.png)
 
 In the diagram you can see your algo (MyAlgoLogic) in the darker blue box. That is where you add your logic to create or cancel orders. 
 
@@ -80,9 +86,9 @@ Remember your mentors are here to help
 
 ### Frequently Asked Questions
 
-1. I am getting compile errors for the encoders in the project, how do I resolve this?
+1. I am getting compile errors when attempting to compile a project, how do I resolve this?
 
-The encoders and decoders are generated from the .xsd documents in the project. To get them generated, you must run a "mvn compile" step either from inside the IDE or from the command line. 
+The encoders and decoders are generated from the .xsd documents in the project. To get them generated, you must run a `./mvnw install` step either from inside the IDE or from the command line. 
 
 Please see, if you're unsure how to run maven in your setup: 
 * (https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
