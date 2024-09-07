@@ -31,7 +31,7 @@ public class OrderBook extends MarketDataEventListener {
     }
 
     private ReadOnlyMarketDataChannelPublishVisitor mktDataVisitor = new ReadOnlyMarketDataChannelPublishVisitor();
-
+    // JB: Why have they created a new object, and returning the reference in the methods below? #Todo
     private AskBookSide askBookSide = new AskBookSide();
     private BidBookSide bidBookSide = new BidBookSide();
 
@@ -54,7 +54,7 @@ public class OrderBook extends MarketDataEventListener {
 
         return canMatch;
     }
-
+// JB: breakpoint on 'onBookUpdate()' outputs bid and ask prices in console. #Todo Need to find out which class outputs ask and buy prices.
     @Override
     public void onBookUpdate(BookUpdateDecoder bookUpdate) {
         //don't process updates from ourself.

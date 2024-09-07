@@ -17,10 +17,9 @@ public class AddCancelAlgoLogic implements AlgoLogic {
 
     @Override
     public Action evaluate(SimpleAlgoState state) {
-        // what is state, looks to be an object of SimpleAlgoState
-        // SimpleAlgoState is an interface : Assume parent class
+        // JB: SimpleAlgoState is an interface : Assume parent class
         logger.info("[ADDCANCELALGO] In Algo Logic....");
-
+        // Not sure
         final String book = Util.orderBookToString(state);
 
         logger.info("[ADDCANCELALGO] Algo Sees Book as:\n" + book);
@@ -33,6 +32,7 @@ public class AddCancelAlgoLogic implements AlgoLogic {
         if (totalOrderCount > 20) {
             return NoAction.NoAction;
             // JB: this does nothing, assume 'No action' included as the method must return something
+
         }
 
         final var activeOrders = state.getActiveChildOrders();

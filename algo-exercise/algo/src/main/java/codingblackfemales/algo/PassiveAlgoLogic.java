@@ -27,17 +27,23 @@ public class PassiveAlgoLogic implements AlgoLogic{
         final BidLevel nearTouch = state.getBidAt(0);
 
         long quantity = 75;
-        long price = nearTouch.price;
+        long price = nearTouch.price; // JB: Don't understand the '.price', and what it is doing
 
         //until we have three child orders....
         if(state.getChildOrders().size() < 3){
             //then keep creating a new one
             logger.info("[PASSIVEALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book with: " + quantity + " @ " + price);
             return new CreateChildOrder(Side.BUY, quantity, price);
+            // JB: need to look into alternative ways of creating object to reduce need of fetching from Heap memory
         }else{
             logger.info("[PASSIVEALGO] Have:" + state.getChildOrders().size() + " children, want 3, done.");
             return NoAction;
         }
+        /*
+        Potentially
+        So I assume that the child orders are all in a pond, you retrieve one child order to convert into active child order through 'CreateChildOrder'
+
+         */
 
     }
 }

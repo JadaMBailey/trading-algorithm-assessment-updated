@@ -8,6 +8,7 @@ import codingblackfemales.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class MyAlgoLogic implements AlgoLogic {
 
     private static final Logger logger = LoggerFactory.getLogger(MyAlgoLogic.class);

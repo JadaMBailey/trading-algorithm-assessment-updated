@@ -27,7 +27,7 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
     private final BookUpdateEncoder encoder = new BookUpdateEncoder();
 
     private AlgoContainer container;
-
+    // JB: method from 'SequencerTestCase' abstract class
     @Override
     public Sequencer getSequencer() {
         final TestNetwork network = new TestNetwork();
@@ -41,10 +41,10 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
         final OrderBook book = new OrderBook(marketDataChannel, orderChannel);
 
         final OrderBookInboundOrderConsumer orderConsumer = new OrderBookInboundOrderConsumer(book);
-
+        // JB: Why is runTrigger being passed 3 times?
         container = new AlgoContainer(new MarketDataService(runTrigger), new OrderService(runTrigger), runTrigger, actioner);
         //set my algo logic
-        container.setLogic(new AddCancelAlgoLogic());
+        container.setLogic(new AddCancelAlgoLogic()); // JB: would need to change to 'MyAlgoLogic' when I write algo
         // AddCancelAlgoLogic - what I have to write
         network.addConsumer(new LoggingConsumer());
         network.addConsumer(book);
@@ -132,3 +132,11 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
         //assertEquals(225, filledQuantity);
     }
 }
+/*
+   ### JB Notes ###
+   OrderService : deals with creating, modifying or cancelling orders
+   MarketDataService : Provides simulated market data (prices, bids, asks)
+   OrderBook : Keeps track of what is available to buy or sell in the market at any time
+   Sequencer : Controls the flow of events
+   TestNetwork : Provides communication between all components
+ */
