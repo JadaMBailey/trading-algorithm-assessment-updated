@@ -98,15 +98,15 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
+        encoder.bidBookCount(2) // JB: ORDER REDUCTION (modified quantity)
                 .next().price(95L).size(100L)
-                .next().price(93L).size(200L)
+//                .next().price(93L).size(200L) JB: ORDER REDUCTION
                 .next().price(91L).size(300L);
 
-        encoder.askBookCount(4)
-                .next().price(98L).size(501L)
-                .next().price(101L).size(200L)
-                .next().price(110L).size(5000L)
+        encoder.askBookCount(1) // JB: ORDER REDUCTION (modified quantity)
+//                .next().price(98L).size(501L)
+//                .next().price(101L).size(200L)
+//                .next().price(110L).size(5000L) JB: ORDER REDUCTION
                 .next().price(119L).size(5600L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
