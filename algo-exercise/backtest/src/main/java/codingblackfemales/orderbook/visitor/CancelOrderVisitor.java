@@ -30,7 +30,7 @@ public class CancelOrderVisitor implements OrderBookVisitor{
         if(order instanceof LimitOrderFlyweight){
             LimitOrderFlyweight limit = (LimitOrderFlyweight) order;
             if(limit.getOrderId() == orderId){
-                logger.info("[ORDERBOOK] Cancelling order: " + limit);
+                logger.info("[JB: visitOrder()] [ORDERBOOK] Cancelling order: " + limit);
                 level.setFirstOrder(limit.remove());
                 level.setQuantity(level.getQuantity() - limit.getQuantity());
             }

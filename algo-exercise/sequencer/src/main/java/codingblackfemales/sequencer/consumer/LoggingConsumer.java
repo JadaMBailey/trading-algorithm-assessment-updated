@@ -34,14 +34,14 @@ public class LoggingConsumer implements Consumer {
             final int actingVersion = decoder.version();
             int bufferOffset = decoder.encodedLength();
             bookUpdateDecoder.wrap(buffer, bufferOffset, actingBlockLength, actingVersion);
-            logger.info("[Ln_37-JB " + decoder.sequencerNumber() + "] \n" + bookUpdateToString(bookUpdateDecoder));
+            logger.info("[[Ln_37-JB] " + decoder.sequencerNumber() + "] \n" + bookUpdateToString(bookUpdateDecoder));
         } else if (decoder.schemaId() == CreateOrderEncoder.SCHEMA_ID && decoder.templateId() == CreateOrderDecoder.TEMPLATE_ID) {
             final int actingBlockLength = decoder.blockLength();
             final int actingVersion = decoder.version();
 
             int bufferOffset = decoder.encodedLength();
             createOrderDecoder.wrap(buffer, bufferOffset, actingBlockLength, actingVersion);
-            logger.info("[Ln_44-JB " + decoder.sequencerNumber() + "] " + createOrderDecoder);
+            logger.info("[[Ln_44-JB] " + decoder.sequencerNumber() + "] " + createOrderDecoder);
         } else if (decoder.schemaId() == FillOrderDecoder.SCHEMA_ID && decoder.templateId() == FillOrderDecoder.TEMPLATE_ID) {
             final int actingBlockLength = decoder.blockLength();
             final int actingVersion = decoder.version();

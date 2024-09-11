@@ -59,7 +59,7 @@ public class OrderBook extends MarketDataEventListener {
     public void onBookUpdate(BookUpdateDecoder bookUpdate) {
         //don't process updates from ourself.
         if(!bookUpdate.source().equals(Source.ORDERBOOK)){
-            logger.info("[ORDERBOOK.onBookUpdate(JB)] Processing Mkt Data Update"); // JB: Added method
+            logger.info("[.onBookUpdate(JB)] [ORDERBOOK] Processing Mkt Data Update");
             getBidBookSide().removeMarketDataOrders();
             addOrMatchBidMarketDataOrders(bookUpdate); // Need to step into this line of code #Todo
 
@@ -73,7 +73,7 @@ public class OrderBook extends MarketDataEventListener {
             final long price = decoder.price();
             final long quantity = decoder.size();
             var marketOrder = new MarketDataOrderFlyweight(Side.SELL, price, quantity);
-            logger.debug("[ORDERBOOK.addOrMatchAskMarketDataOrders(1-JB)] ASK: Adding order" + marketOrder);
+            logger.debug("[JB:addOrMatchAskMarketDataOrders(1)] [ORDERBOOK] ASK: Adding order" + marketOrder);
             if(canMatch(Side.SELL, price)){
                 matchMarketDataOrder(marketOrder);
             }else{
@@ -115,7 +115,7 @@ public class OrderBook extends MarketDataEventListener {
             final long price = decoder.price();
             final long quantity = decoder.size();
             var marketOrder = new MarketDataOrderFlyweight(Side.SELL, price, quantity);
-            logger.debug("[ORDERBOOK.addOrMatchBidMarketDataOrders(4-JB)] ASK: Adding order" + marketOrder);
+            logger.debug("[JB:addOrMatchAskMarketDataOrders(4)] [ORDERBOOK] ASK: Adding order" + marketOrder);
             if(canMatch(Side.BUY, price)){
                 matchMarketDataOrder(marketOrder);
             }else{
@@ -163,7 +163,7 @@ public class OrderBook extends MarketDataEventListener {
 
     public void addLiquidity(final LimitOrderFlyweight limit) {
         if(limit.getSide().equals(Side.BUY)){
-            logger.info("[ORDERBOOK.addLiquidity(JB)] Adding passive limit order to BID book" + limit);
+            logger.info("[JB:addLiquidity()] [ORDERBOOK] Adding passive limit order to BID book" + limit);
             this.getBidBookSide().addLimitOrder(limit);
         }else{
             logger.info("[ORDERBOOK] Adding passive limit order to ASK book" + limit);
@@ -182,7 +182,7 @@ public class OrderBook extends MarketDataEventListener {
     }
 
     public void onCancelOrder(final long orderIdToCancel){
-        logger.info("[ORDERBOOK] Cancelling order (id=:" + orderIdToCancel + ")");
+        logger.info("[JB: onCancelOrder()] [ORDERBOOK] Cancelling order (id=:" + orderIdToCancel + ")");
         var cancelVisitor = new CancelOrderVisitor(orderIdToCancel);
         getAskBookSide().accept(cancelVisitor);
         getBidBookSide().accept(cancelVisitor);

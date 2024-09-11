@@ -16,7 +16,7 @@ public class MarketDataChannel {
     }
 
     public void publish(DirectBuffer buffer){
-        logger.info("[ORDERBOOK] Sending market data update...");
+        logger.info("[JB:publish()] [ORDERBOOK] Sending market data update...");
         sequencer.onCommand(buffer);
     }
 }

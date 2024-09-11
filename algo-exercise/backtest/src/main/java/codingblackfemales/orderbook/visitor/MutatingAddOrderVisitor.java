@@ -32,7 +32,7 @@ public class MutatingAddOrderVisitor implements OrderBookVisitor,FilteringOrderB
     @Override
     public void visitOrder(DefaultOrderFlyweight order, OrderBookSide side, OrderBookLevel level, boolean isLast) {
         if(order.getPrice() == orderToAdd.getPrice() && isLast){
-            logger.info("[ORDERBOOK] + " +order);
+            logger.info("[JB: visitOrder()] [ORDERBOOK]  + " +order);
             order.add(orderToAdd);
         }
     }

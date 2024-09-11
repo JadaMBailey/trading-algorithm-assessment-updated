@@ -18,11 +18,11 @@ public class AddCancelAlgoLogic implements AlgoLogic {
     @Override
     public Action evaluate(SimpleAlgoState state) {
         // JB: SimpleAlgoState is an interface : Assume parent class
-        logger.info("[ADDCANCELALGO.evaluate(JB)] In Algo Logic....");
+        logger.info("[JB:evaluate()][ADDCANCELALGO] In Algo Logic....");
         // Not sure
         final String book = Util.orderBookToString(state);
 
-        logger.info("[ADDCANCELALGO.evaluate(JB)] Algo Sees Book as:\n" + book);
+        logger.info("[JB:evaluate()] [ADDCANCELALGO] Algo Sees Book as:\n" + book);
 
         var totalOrderCount = state.getChildOrders().size();
         // JB: would change 'var' to be specific to increase speed I believe to int
@@ -45,7 +45,7 @@ public class AddCancelAlgoLogic implements AlgoLogic {
             // JB: He has used a nested if condition - think why?
             if (option.isPresent()) {
                 var childOrder = option.get();
-                logger.info("[ADDCANCELALGO] Cancelling order:" + childOrder);
+                logger.info("[JB:evaluate()] [ADDCANCELALGO] Cancelling order:" + childOrder);
                 return new CancelChildOrder(childOrder);
             } else {
                 return NoAction.NoAction;
@@ -55,7 +55,7 @@ public class AddCancelAlgoLogic implements AlgoLogic {
             BidLevel level = state.getBidAt(0);
             final long price = level.price;
             final long quantity = level.quantity;
-            logger.info("[ADDCANCELALGO.evaluate(JB)] Adding order for" + quantity + "@" + price); // Expect to change ref 'ADDCANCELALGO' to 'MYALGO'
+            logger.info("[JB:evaluate()] [ADDCANCELALGO] Adding order for" + quantity + "@" + price); // Expect to change ref 'ADDCANCELALGO' to 'MYALGO'
             return new CreateChildOrder(Side.BUY, quantity, price);
             // jb: Need to find what BUY constant is
             // Finds the highest buyers quantity price

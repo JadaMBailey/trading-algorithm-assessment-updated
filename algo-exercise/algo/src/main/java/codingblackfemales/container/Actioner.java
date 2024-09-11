@@ -16,7 +16,7 @@ public class Actioner {
     }
 
     public void processAction(final Action action){
-        logger.info("[ALGO.processAction(JB)] Actioner, sending action:" + action);
+        logger.info("[JB:processAction()] [ALGO] Actioner, sending action:" + action);
         action.apply(sequencer);
     }
 }
