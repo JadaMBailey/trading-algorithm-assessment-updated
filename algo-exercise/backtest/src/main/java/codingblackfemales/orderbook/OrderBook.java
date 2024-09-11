@@ -59,9 +59,9 @@ public class OrderBook extends MarketDataEventListener {
     public void onBookUpdate(BookUpdateDecoder bookUpdate) {
         //don't process updates from ourself.
         if(!bookUpdate.source().equals(Source.ORDERBOOK)){
-            logger.info("[ORDERBOOK] Processing Mkt Data Update");
+            logger.info("[ORDERBOOK.onBookUpdate(JB)] Processing Mkt Data Update"); // JB: Added method
             getBidBookSide().removeMarketDataOrders();
-            addOrMatchBidMarketDataOrders(bookUpdate);
+            addOrMatchBidMarketDataOrders(bookUpdate); // Need to step into this line of code #Todo
 
             getAskBookSide().removeMarketDataOrders();
             addOrMatchAskMarketDataOrders(bookUpdate);
@@ -73,7 +73,7 @@ public class OrderBook extends MarketDataEventListener {
             final long price = decoder.price();
             final long quantity = decoder.size();
             var marketOrder = new MarketDataOrderFlyweight(Side.SELL, price, quantity);
-            logger.debug("[ORDERBOOK] ASK: Adding order" + marketOrder);
+            logger.debug("[ORDERBOOK.addOrMatchAskMarketDataOrders(1-JB)] ASK: Adding order" + marketOrder);
             if(canMatch(Side.SELL, price)){
                 matchMarketDataOrder(marketOrder);
             }else{
@@ -115,7 +115,7 @@ public class OrderBook extends MarketDataEventListener {
             final long price = decoder.price();
             final long quantity = decoder.size();
             var marketOrder = new MarketDataOrderFlyweight(Side.SELL, price, quantity);
-            logger.debug("[ORDERBOOK] ASK: Adding order" + marketOrder);
+            logger.debug("[ORDERBOOK.addOrMatchBidMarketDataOrders(4-JB)] ASK: Adding order" + marketOrder);
             if(canMatch(Side.BUY, price)){
                 matchMarketDataOrder(marketOrder);
             }else{
@@ -123,6 +123,13 @@ public class OrderBook extends MarketDataEventListener {
             }
         }
     }
+    /*
+    ### JB Notes #Todo ###
+    Not sure why bid price and size values are being inputted in the 'addOrMatchBidMarketDataOrders()'.
+    Additionally, addOrMatchBidMarketDataOrders() is written 4 times to match original ask order quantities. Not sufficient if child order quantity changes
+
+     */
+
 
     @Override
     public void onAskBook(AskBookUpdateDecoder askBook) {
@@ -156,10 +163,10 @@ public class OrderBook extends MarketDataEventListener {
 
     public void addLiquidity(final LimitOrderFlyweight limit) {
         if(limit.getSide().equals(Side.BUY)){
-            logger.info("[ORDERBOOK] Adding passive limit order to BID book" + limit);
+            logger.info("[ORDERBOOK.addLiquidity(JB)] Adding passive limit order to BID book" + limit);
             this.getBidBookSide().addLimitOrder(limit);
         }else{
-            logger.info("A[ORDERBOOK] dding passive limit order to ASK book" + limit);
+            logger.info("[ORDERBOOK] Adding passive limit order to ASK book" + limit);
             this.getAskBookSide().addLimitOrder(limit);
         }
     }

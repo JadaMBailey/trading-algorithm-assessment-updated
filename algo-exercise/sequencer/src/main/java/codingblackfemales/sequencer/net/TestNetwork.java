@@ -20,8 +20,9 @@ public class TestNetwork implements Network{
             /*
             JB: a consumer is either order book, logging service or trading logic
             All consumers do something different with the message
+
              */
-            consumer.onMessage(buffer);
+            consumer.onMessage(buffer); // Need to step into this line #Todo
         }
     }
 

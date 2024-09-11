@@ -17,7 +17,7 @@ public class AlgoContainer implements Consumer {
     private final Actioner actioner;
 
     private AlgoLogic logic;
-
+    // when creating state used an interface
     private final SimpleAlgoState state;
 
     public AlgoContainer(final MarketDataService marketDataService,

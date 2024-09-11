@@ -71,7 +71,7 @@ public class MarketDataService extends MarketDataEventListener {
             bidBook[bookLevel] = new BidLevel();
             bidBook[bookLevel].setPrice(price);
             bidBook[bookLevel].setQuantity(quantity);
-            logger.debug("[ALGO] BID: price:" + price + " quantity:" + quantity);
+            logger.debug("[ALGO-onBookUpdate(JB)] BID: price:" + price + " quantity:" + quantity);
 
             bookLevel+= 1;
             bidLength = bookLevel;
@@ -90,7 +90,7 @@ public class MarketDataService extends MarketDataEventListener {
             askBook[bookLevel].setPrice(price);
             askBook[bookLevel].setQuantity(quantity);
 
-            logger.debug("[ALGO] ASK: price:" + price + " quantity:" + quantity);
+            logger.debug("[ALGO.onBookUpdate(JB)] ASK: price:" + price + " quantity:" + quantity);
 
             bookLevel+= 1;
             askLength = bookLevel;
