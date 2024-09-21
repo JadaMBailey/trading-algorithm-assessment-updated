@@ -55,36 +55,36 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
 
         return sequencer;
     }
-// JB : CODE REDUCTION (Entire Method)
-//    private UnsafeBuffer createSampleMarketDataTick(){
-//        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
-//        final UnsafeBuffer directBuffer = new UnsafeBuffer(byteBuffer);
-//    // MarketDataTick : update for the market data
-//        //write the encoded output to the direct buffer
-//        encoder.wrapAndApplyHeader(directBuffer, 0, headerEncoder);
-//
-//        //set the fields to desired values
-//        encoder.venue(Venue.XLON);
-//        encoder.instrumentId(123L);
-//        encoder.source(Source.STREAM);
-//
-//        encoder.bidBookCount(3)
-//                .next().price(98L).size(100L)
-//                .next().price(95L).size(200L)
-//                .next().price(91L).size(300L);
-//        // JB: buyers : ofter offer less than sellers
-//
-//        encoder.askBookCount(4)
-//                .next().price(100L).size(101L)
-//                .next().price(110L).size(200L)
-//                .next().price(115L).size(5000L)
-//                .next().price(119L).size(5600L);
-//        // sellers
-//
-//        encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
-//
-//        return directBuffer;
-//    }
+
+    private UnsafeBuffer createSampleMarketDataTick(){
+        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
+        final UnsafeBuffer directBuffer = new UnsafeBuffer(byteBuffer);
+    // MarketDataTick : update for the market data
+        //write the encoded output to the direct buffer
+        encoder.wrapAndApplyHeader(directBuffer, 0, headerEncoder);
+
+        //set the fields to desired values
+        encoder.venue(Venue.XLON);
+        encoder.instrumentId(123L);
+        encoder.source(Source.STREAM);
+
+        encoder.bidBookCount(3)
+                .next().price(98L).size(100L)
+                .next().price(94L).size(200L) // need to change back to '95'
+                .next().price(91L).size(300L);
+        // JB: buyers : ofter offer less than sellers
+
+        encoder.askBookCount(4)
+                .next().price(100L).size(101L)
+                .next().price(110L).size(200L)
+                .next().price(115L).size(5000L)
+                .next().price(119L).size(5600L);
+        // sellers
+
+        encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
+
+        return directBuffer;
+    }
 
     private UnsafeBuffer createSampleMarketDataTick2(){
         final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
@@ -98,15 +98,15 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(2) // JB: ORDER REDUCTION (modified quantity)
-                .next().price(95L).size(100L)
-//                .next().price(93L).size(200L) JB: ORDER REDUCTION
+        encoder.bidBookCount(3) // JB: ORDER REDUCTION (modified quantity)
+                .next().price(105L).size(100L) // Need to change back to '95'
+                .next().price(99L).size(200L) // Need to change back to '98'
                 .next().price(91L).size(300L);
 
-        encoder.askBookCount(1) // JB: ORDER REDUCTION (modified quantity)
-//                .next().price(98L).size(501L)
-//                .next().price(101L).size(200L)
-//                .next().price(110L).size(5000L) JB: ORDER REDUCTION
+        encoder.askBookCount(4) // JB: ORDER REDUCTION (modified quantity)
+                .next().price(98L).size(501L)
+                .next().price(101L).size(200L)
+                .next().price(110L).size(5000L)
                 .next().price(119L).size(5600L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
@@ -116,13 +116,14 @@ public class AddCancelAlgoBackTest extends SequencerTestCase {
 
     @Test
     public void testExampleBackTest() throws Exception {
+
         //create a sample market data tick....
-       // send(createSampleMarketDataTick()); JB : CODE REDUCTION
+        send(createSampleMarketDataTick());
         //simple assert to check we had 3 orders created
         //assertEquals(container.getState().getChildOrders().size(), 3);
-
+        send(createSampleMarketDataTick2());
         //when: market data moves towards us
-       send(createSampleMarketDataTick2());
+
 
         //then: get the state
         //var state = container.getState();

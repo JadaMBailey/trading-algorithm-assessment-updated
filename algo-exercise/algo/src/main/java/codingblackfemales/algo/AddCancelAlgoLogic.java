@@ -69,8 +69,22 @@ public class AddCancelAlgoLogic implements AlgoLogic {
 
        Outer Else: no child orders = true
        active child order to buy at '0'; store price and quantity of active child order;
-       log price and quanitity details;
+       log price and quantity details;
        Create a new object of child order and pass in quantity, price and BUY constant (Not sure what that actually means?)
 
      */
 
+/*
+    ### Current Understanding of Flow ###
+    1) Loads the first 7 orders found in AddCancelBackTest onto the OrderBook
+    2) Creates a Buy order of the highest bid order
+    3) Cancels that order
+    4) Repeats
+
+    ### Questions
+    1) Have no idea where it is loading the orders to the Orderbook
+    2) When I switch the marketTicks around in terms of in the order it appears in the testExampleBackTest() the following occurs
+        - extra log lines appear
+        - Matches the first two Buy orders against the 501@98 ask order. But only impacts the quantity of 105 buy order
+        - Removes the two ask orders further on, have no idea why.
+ */
