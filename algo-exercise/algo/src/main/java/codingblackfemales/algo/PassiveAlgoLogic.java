@@ -3,6 +3,7 @@ package codingblackfemales.algo;
 import codingblackfemales.action.Action;
 import codingblackfemales.action.CreateChildOrder;
 import codingblackfemales.sotw.SimpleAlgoState;
+import codingblackfemales.sotw.marketdata.AskLevel;
 import codingblackfemales.sotw.marketdata.BidLevel;
 import codingblackfemales.util.Util;
 import messages.order.Side;
@@ -27,7 +28,7 @@ public class PassiveAlgoLogic implements AlgoLogic{
         final BidLevel nearTouch = state.getBidAt(0);
 
         long quantity = 75;
-        long price = nearTouch.price; // JB: Don't understand the '.price', and what it is doing
+        long price = nearTouch.price; // JB: best bid for buy order
 
         //until we have three child orders....
         if(state.getChildOrders().size() < 3){
@@ -40,9 +41,16 @@ public class PassiveAlgoLogic implements AlgoLogic{
             return NoAction;
         }
         /*
-        Potentially
-        So I assume that the child orders are all in a pond, you retrieve one child order to convert into active child order through 'CreateChildOrder'
+        Passive Orders
+        - typically placed away from the current market price (to avoid immediate execution)
+        - [Benefit] : Reduce market impact and costs, as it is a liquidity provider
+        -Typical algo: higher price for sells and lower price for bids (think best case scenario for waiting so long)
+        -
 
+
+
+        Assumptions to check
+        #Todo : I believe this algo is a price/time priority
          */
 
     }

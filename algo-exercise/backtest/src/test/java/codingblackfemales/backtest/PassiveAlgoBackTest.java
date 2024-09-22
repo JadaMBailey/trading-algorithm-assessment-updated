@@ -38,7 +38,7 @@ public class PassiveAlgoBackTest extends SequencerTestCase {
 
         final RunTrigger runTrigger = new RunTrigger();
         final Actioner actioner = new Actioner(sequencer);
-
+        // To monitor current bid and ask prices
         final MarketDataChannel marketDataChannel = new MarketDataChannel(sequencer);
         final OrderChannel orderChannel = new OrderChannel(sequencer);
         final OrderBook book = new OrderBook(marketDataChannel, orderChannel);
@@ -123,13 +123,17 @@ public class PassiveAlgoBackTest extends SequencerTestCase {
         assertEquals(container.getState().getChildOrders().size(), 3);
 
         //when: market data moves towards us
-        send(createSampleMarketDataTick2());
+        send(createSampleMarketDataTick2()); // JB: The best ask price has dropped
 
         //then: get the state
         var state = container.getState();
         long filledQuantity = state.getChildOrders().stream().map(ChildOrder::getFilledQuantity).reduce(Long::sum).get();
 
         //and: check that our algo state was updated to reflect our fills when the market data
-        assertEquals(225, filledQuantity);
+        assertEquals(225, filledQuantity); // JB: 225 comes from the multiplication of child orders to each quantity
     }
 }
+/*
+## Info
+- assertEquals() : Checks if hard code or variable matches the other being separated by a ','
+ */
