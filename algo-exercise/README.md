@@ -8,13 +8,21 @@ The objective of this challenge is to write a simple trading algo that creates a
 
 **Stretch objective:** write an algo that can make money buy buying shares when the order book is cheaper, and selling them when the order book is more expensive. 
 
-Note: make sure you think about how the market data could change over time, add scenarios into your test to show how you've tested those scenarios. 
+##### Note
+Make sure you think about how the market data could change over time, add scenarios into your test to show how you've tested those scenarios. 
 
 ### How to Get Started
 
 #### Pre-requisites
 
 1. The project requires Java version 17 or higher
+
+##### Note
+This project is configured for Java 17. If you have a later version installed, it will compile and run successfully, but you may see warnings in the log like this, which you can safely ignore:
+
+```sh
+[WARNING] system modules path not set in conjunction with -source 17
+```
 
 #### Opening the project
 
@@ -24,7 +32,7 @@ Note: make sure you think about how the market data could change over time, add 
 4. Navigate to the [MyAlgoTest.java](https://github.com/cbfacademy/trading-algorithm-assessment/blob/main/algo-exercise/getting-started/src/test/java/codingblackfemales/gettingstarted/MyAlgoTest.java) and [MyAlgoLogic.java](https://github.com/cbfacademy/trading-algorithm-assessment/blob/main/algo-exercise/getting-started/src/main/java/codingblackfemales/gettingstarted/MyAlgoLogic.java)
 5. You're ready to go!
 
-#### Note
+##### Note
 You will first need to run the Maven `install` task to make sure the binary encoders and decoders are installed and available for use. You can use the provided Maven wrapper or an installed instance of Maven, either in the command line or from the IDE integration.
 
 To get started, run the following command from the project root: `./mvnw clean install`. Once you've done this, you can compile or test specific projects using the `--projects` flag, e.g.:
@@ -94,10 +102,3 @@ Please see, if you're unsure how to run maven in your setup:
 * (https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
 * (https://www.jetbrains.com/help/idea/maven-support.html)
 * (https://code.visualstudio.com/docs/java/java-build#_execute-maven-commands-and-goals)
-
-
-
-
-
-
-

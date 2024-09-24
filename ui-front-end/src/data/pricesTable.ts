@@ -27,7 +27,7 @@ const { bid, bidQuantity, offer, offerQuantity } = buildDataColumnMap(
   schemas,
   "prices"
 );
-const updateGenerator = new MarketDataGenerator(schemas.prices);
+const updateGenerator = new MarketDataGenerator();
 
 export const pricesTable = new Table(
   schemas.prices,
