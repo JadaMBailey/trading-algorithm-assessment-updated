@@ -28,7 +28,9 @@ public class PassiveAlgoLogic implements AlgoLogic{
         final BidLevel nearTouch = state.getBidAt(0);
 
         long quantity = 75;
-        long price = nearTouch.price; // JB: best bid for buy order
+        // JB: best bid for buy order
+//      //  long price = 97;  JB: Added the '-1', which worked to add an order that is 75@97
+        long price = nearTouch.price - 1L; // JB: Added the '-1', which worked to add an order that is 75@97
 
         //until we have three child orders....
         if(state.getChildOrders().size() < 3){

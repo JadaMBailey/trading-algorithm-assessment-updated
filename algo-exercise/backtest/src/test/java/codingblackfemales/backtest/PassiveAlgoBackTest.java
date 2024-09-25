@@ -99,7 +99,7 @@ public class PassiveAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
+        encoder.bidBookCount(4)
                 .next().price(95L).size(100L)
                 .next().price(93L).size(200L)
                 .next().price(91L).size(300L);
@@ -120,7 +120,7 @@ public class PassiveAlgoBackTest extends SequencerTestCase {
         //create a sample market data tick....
         send(createSampleMarketDataTick());
         //simple assert to check we had 3 orders created
-        assertEquals(container.getState().getChildOrders().size(), 3);
+        assertEquals(container.getState().getChildOrders().size(), 3);//
 
         //when: market data moves towards us
         send(createSampleMarketDataTick2()); // JB: The best ask price has dropped
@@ -136,4 +136,18 @@ public class PassiveAlgoBackTest extends SequencerTestCase {
 /*
 ## Info
 - assertEquals() : Checks if hard code or variable matches the other being separated by a ','
+
+## Understanding of PassiveAlgo through assessing console output
+- Using the first method marketTicks it adds 75@98 because logic is requesting to choose top bid
+- It will keep adding until 3 child orders added.
+- Then it uses the second method marketTick to try and fill order, which will happen as the price and quantity works.
+
+### Problems found
+- So the orders are filled by id separately but are not tracked to show current appearance of Orderbook
+-
+
+### Modified changes to code (price = BidLevel.getBidAt(0) - 1) => 97, discoveries found
+- When I change the price to add to Orderbook, it doesn't include in table style console output
+- Error message : java.lang.NullPointerException: Cannot read field "quantity" because "level" is null
+- It states that the order has been logged in quantities of 75
  */
