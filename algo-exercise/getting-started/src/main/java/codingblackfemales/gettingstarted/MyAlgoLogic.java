@@ -26,10 +26,17 @@ public class MyAlgoLogic implements AlgoLogic {
         long price = (nearTouch.price - (fTouch.price - nearTouch.price)); // JB: 1) workout spread 2) Take away from the highest bid price
 
 
-        /********
-         *
-         * Add your logic here....
-         *
+        /******** My Thoughts
+         * Venue is set to 'XLON' which is a reference for the LSE market
+         * Have chosen to go with a PassiveAlgo strategy
+         * Have chosen 'FTSE 100' index to grab data for backtesting for two reasons
+            * FTSE 100 is on the LSE market
+            * In a real world situation FTSE 100 has a high liquidity
+         * Add a cancel condition : As the task mentions Add and Cancel then the stretch being Buy and Sell, I can
+           fulfil all the requirements without creating two separate algo
+            * Problem: The only reason I can think of to cancel is based on how long the order has been on the book.
+            #Todo Need to do more research into passive algo strategies
+         * Need to also make the quantity dynamic to reduce market impact movement
          */
 
         return NoAction.NoAction;
