@@ -105,8 +105,9 @@ public class PassiveAlgoBackTest extends SequencerTestCase {
                 .next().price(91L).size(300L);
 
         encoder.askBookCount(4)
-                .next().price(98L).size(501L)
-                .next().price(101L).size(200L)
+                .next().price(98L).size(601L)
+                .next().price(97L).size(501L)
+//                .next().price(101L).size(200L)
                 .next().price(110L).size(5000L)
                 .next().price(119L).size(5600L);
 
