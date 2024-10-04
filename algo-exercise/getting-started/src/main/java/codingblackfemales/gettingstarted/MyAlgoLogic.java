@@ -1,6 +1,7 @@
 package codingblackfemales.gettingstarted;
 
 import codingblackfemales.action.Action;
+import codingblackfemales.action.CancelChildOrder;
 import codingblackfemales.action.CreateChildOrder;
 import codingblackfemales.action.NoAction;
 import codingblackfemales.algo.AlgoLogic;
@@ -27,29 +28,108 @@ public class MyAlgoLogic implements AlgoLogic {
 
         final BidLevel nearTouch = state.getBidAt(0); // Highest buy price - TopBook for BUY
         final AskLevel farTouch = state.getAskAt(0); // Lowest sell price - TopBook for ASK
-        long price = (nearTouch.price - (farTouch.price - nearTouch.price)); // JB: 1) workout spread 2) Take away from the highest bid price
+//        long price = (nearTouch.price - (farTouch.price - nearTouch.price)); // JB: 1) workout spread 2) Take away from the highest bid price
         long targetQuantity = 300;
 
+     /*
+      Comment - make 2 child orders, if orders are between 92 - 96
+        Set volume quantity to high with topbook price
+      make 3 child orders, if orders are between 97 - 102
+        Set volume quantity to low with topbook price
+        1 buy and 2 sell
+        Cancel the last Buy order added
+      */
 
-        if(state.getChildOrders().size() < 3){
-            if (price <= 98){
-                long quantity = targetQuantity / 2;
-                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
-                        " with: " + quantity + " @ " + price);
-                return new CreateChildOrder(Side.BUY, quantity, price);
-            } else if (price > 98 && price < 105) {
+        if (state.getChildOrders().size() < 2) {
+            if (state.getBidLevels() < 4) {
+                long price = nearTouch.price;
                 long quantity = targetQuantity / 4;
-                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
+                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 4, joining passive side of book" +
                         " with: " + quantity + " @ " + price);
                 return new CreateChildOrder(Side.BUY, quantity, price);
-            } else {
-                return NoAction.NoAction;
             }
-        } else {
-            logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, done.");
-            return NoAction.NoAction;
         }
 
+        if (state.getChildOrders().size() < 4) {
+            if (state.getBidLevels() < 5) {
+                long price = nearTouch.price-1L;
+                long quantity = targetQuantity / 2;
+                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 4, joining passive side of book" +
+                        " with: " + quantity + " @ " + price);
+                return new CreateChildOrder(Side.BUY, quantity, price);
+            }
+        } else {
+            logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children added, want 4, done.");
+            return NoAction.NoAction;
+        }
+        return NoAction.NoAction;
+    }}
+
+
+
+
+
+
+//        if(state.getChildOrders().size() < 3){
+//            if (price <= 98){
+//                long quantity = targetQuantity / 2;
+//                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
+//                        " with: " + quantity + " @ " + price);
+//                return new CreateChildOrder(Side.BUY, quantity, price);
+//            } else if (price > 98 && price < 105) {
+//                long quantity = targetQuantity / 4;
+//                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
+//                        " with: " + quantity + " @ " + price);
+//                return new CreateChildOrder(Side.BUY, quantity, price);
+//            } else {
+//                return NoAction.NoAction;
+//            }
+//        } else {
+//            logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, done.");
+//            return NoAction.NoAction;
+//        }
+
+//        #### Second Conditional block : Tried to retrieve different child orders
+//        if (state.getChildOrders().size() < 2) {
+//            if (price <= 98) {
+//                long quantity = targetQuantity / 2;
+//                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
+//                        " with: " + quantity + " @ " + price);
+//                return new CreateChildOrder(Side.BUY, quantity, price);
+//            }
+//        } else if (state.getChildOrders().size() < 1) {
+//            if (price > 98 && price < 105) {
+//                long quantity = targetQuantity / 4;
+//                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
+//                        " with: " + quantity + " @ " + price);
+//                return new CreateChildOrder(Side.BUY, quantity, price);
+//            }
+//        } else {
+//            logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, done.");
+//            return NoAction.NoAction;
+//        }
+//        return NoAction.NoAction;
+
+//        #### Third condition block in progress
+//        var totalOrderCount = state.getChildOrders().size();
+//
+//        if (totalOrderCount > 10) {
+//            return NoAction.NoAction;
+//        }
+//
+//        final var activeOrders = state.getActiveChildOrders();
+//
+//        if (activeOrders.size() > 1) {
+//
+//            final var option = activeOrders.stream().findFirst();
+//
+//            if (state.){
+//                var childOrder = option.get();
+//                logger.info("[ADDCANCELALGO] Cancelling order:" + childOrder);
+//                return new CancelChildOrder(childOrder);
+//            }
+//
+//        }
 
         /******** My Thoughts
          * Venue is set to 'XLON' which is a reference for the LSE market
@@ -64,8 +144,8 @@ public class MyAlgoLogic implements AlgoLogic {
          * Need to also make the quantity dynamic to reduce market impact movement
          */
 
-    }
-}
+
+
 /*
  ## Tips for my Passive Algo ##
         - Need to add a condition to cancel existing order if price moves away from current market; Would need to set a range
