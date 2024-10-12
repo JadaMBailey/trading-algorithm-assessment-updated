@@ -3,7 +3,6 @@ package codingblackfemales.gettingstarted;
 import codingblackfemales.algo.AlgoLogic;
 import org.junit.Test;
 import codingblackfemales.sotw.ChildOrder;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -18,11 +17,11 @@ import static org.junit.Assert.assertEquals;
  * If you cancel the order your child order will show the order status as cancelled in the childOrders of the state object.
  *
  */
-public class MyAlgoBackTest extends AbstractAlgoBackTest {
+public class MyStretchBackTest extends AbstractAlgoBackTest {
 
     @Override
     public AlgoLogic createAlgoLogic() {
-        return new MyAlgoLogic();
+        return new MyStretchLogic();
     }
 
     @Test
@@ -31,21 +30,21 @@ public class MyAlgoBackTest extends AbstractAlgoBackTest {
         send(createTick());
 
         //ADD asserts when you have implemented your algo logic
-        assertEquals(4, container.getState().getChildOrders().size());
+        assertEquals(3, container.getState().getChildOrders().size());
 
         //when: market data moves towards us
-//        send(createTick2());
+        send(createTick2());
 
         //then: get the state
-//        var state = container.getState();
+        var state = container.getState();
 
-//        send(createTick3());
-//        send(createTick4());
+        send(createTick3());
+        send(createTick4());
 
         //Check things like filled quantity, cancelled order count etc....
 //        long filledQuantity = state.getChildOrders().stream().map(ChildOrder::getFilledQuantity).reduce(Long::sum).get();
 //        //and: check that our algo state was updated to reflect our fills when the market data
-//        assertEquals(450, filledQuantity);
+//        assertEquals(400, filledQuantity);
     }
 
 }

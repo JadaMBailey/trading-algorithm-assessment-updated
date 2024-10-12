@@ -13,9 +13,9 @@ import messages.order.Side;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MyAlgoLogic implements AlgoLogic {
+public class MyAlgoAddCancelLogic implements AlgoLogic {
 
-    private static final Logger logger = LoggerFactory.getLogger(MyAlgoLogic.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyAlgoAddCancelLogic.class);
 
     @Override
     public Action evaluate(SimpleAlgoState state) {

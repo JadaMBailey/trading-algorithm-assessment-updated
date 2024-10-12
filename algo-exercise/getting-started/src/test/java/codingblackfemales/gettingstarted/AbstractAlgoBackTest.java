@@ -102,15 +102,15 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
-                .next().price(99L).size(100L)
-                .next().price(97L).size(200L)
-                .next().price(96L).size(200L)
-                .next().price(95L).size(300L);
+        encoder.bidBookCount(4)
+                .next().price(96L).size(100L)
+                .next().price(95L).size(200L)
+                .next().price(94L).size(200L)
+                .next().price(93L).size(300L);
 
         encoder.askBookCount(4)
-                .next().price(96L).size(501L) // JB: Changed price from '98'
-                .next().price(101L).size(200L)
+                .next().price(97L).size(501L) // JB: Changed price from '98'
+                .next().price(98L).size(700L)
                 .next().price(110L).size(5000L)
                 .next().price(119L).size(5600L);
 
