@@ -49,7 +49,6 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         network.addConsumer(container.getOrderService());
         network.addConsumer(orderConsumer);
         network.addConsumer(container);
-
         return sequencer;
     }
 
@@ -103,13 +102,46 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
-                .next().price(95L).size(100L)
-                .next().price(93L).size(200L)
-                .next().price(91L).size(300L);
+        encoder.bidBookCount(4)
+                .next().price(96L).size(100L)
+                .next().price(95L).size(200L)
+                .next().price(94L).size(200L)
+                .next().price(93L).size(300L);
 
         encoder.askBookCount(4)
-                .next().price(96L).size(501L) // JB: Changed price from '98'
+                .next().price(97L).size(501L) // JB: Changed price from '98'
+                .next().price(98L).size(700L)
+                .next().price(110L).size(5000L)
+                .next().price(119L).size(5600L);
+
+        encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
+
+        return directBuffer;
+    }
+
+    protected UnsafeBuffer createTick3(){
+
+        final MessageHeaderEncoder headerEncoder = new MessageHeaderEncoder();
+        final BookUpdateEncoder encoder = new BookUpdateEncoder();
+
+        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
+        final UnsafeBuffer directBuffer = new UnsafeBuffer(byteBuffer);
+
+        //write the encoded output to the direct buffer
+        encoder.wrapAndApplyHeader(directBuffer, 0, headerEncoder);
+
+        //set the fields to desired values
+        encoder.venue(Venue.XLON);
+        encoder.instrumentId(123L);
+        encoder.source(Source.STREAM);
+
+        encoder.bidBookCount(3)
+                .next().price(103L).size(100L)
+                .next().price(98L).size(200L)
+                .next().price(95L).size(300L);
+
+        encoder.askBookCount(4)
+                .next().price(96L).size(801L)
                 .next().price(101L).size(200L)
                 .next().price(110L).size(5000L)
                 .next().price(119L).size(5600L);
@@ -119,5 +151,36 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         return directBuffer;
     }
 
+    protected UnsafeBuffer createTick4(){
+
+        final MessageHeaderEncoder headerEncoder = new MessageHeaderEncoder();
+        final BookUpdateEncoder encoder = new BookUpdateEncoder();
+
+        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
+        final UnsafeBuffer directBuffer = new UnsafeBuffer(byteBuffer);
+
+        //write the encoded output to the direct buffer
+        encoder.wrapAndApplyHeader(directBuffer, 0, headerEncoder);
+
+        //set the fields to desired values
+        encoder.venue(Venue.XLON);
+        encoder.instrumentId(123L);
+        encoder.source(Source.STREAM);
+
+        encoder.bidBookCount(3)
+                .next().price(90L).size(200L)
+                .next().price(86L).size(250L)
+                .next().price(83L).size(380L);
+
+        encoder.askBookCount(4)
+                .next().price(110L).size(501L)
+                .next().price(111L).size(200L)
+                .next().price(120L).size(5000L)
+                .next().price(123L).size(5600L);
+
+        encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
+
+        return directBuffer;
+    }
 
 }
