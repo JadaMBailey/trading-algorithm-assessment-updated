@@ -28,21 +28,36 @@ public class MyStretchBackTest extends AbstractAlgoBackTest {
     public void testExampleBackTest() throws Exception {
         //create a sample market data tick....
         send(createTick8am());
+        send(createTick8_30am());
+        send(createTick9am());
+        send(createTick9_30am());
+        send(createTick10am());
+        send(createTick10_30am());
+        send(createTick11am());
+        send(createTick11_30am());
+        send(createTick12pm());
+        send(createTick12_30pm());
+        send(createTick1pm());
+        send(createTick1_30pm());
+        send(createTick2pm());
+        send(createTick2_30pm());
+        send(createTick3pm());
+        send(createTick3_30pm());
+        send(createTick4pm());
 
         //ADD asserts when you have implemented your algo logic
-        assertEquals(6, container.getState().getChildOrders().size());
+        assertEquals(3, container.getState().getChildOrders().size());
 
         //when: market data moves towards us
-        send(createTick8_30am());
+
 
         //then: get the state
         var state = container.getState();
 
-        send(createTick9am());
-        send(createTick9_30am());
-        MyStretchLogic v = new MyStretchLogic();
+
+//        MyStretchLogic v = new MyStretchLogic();
 //        v.vwap(state); // That works!
-        v.postTradeAnalysis(state); // That works!
+//        v.postTradeAnalysis(state); // That works!
 
         //Check things like filled quantity, cancelled order count etc....
 //        long filledQuantity = state.getChildOrders().stream().map(ChildOrder::getFilledQuantity).reduce(Long::sum).get();
