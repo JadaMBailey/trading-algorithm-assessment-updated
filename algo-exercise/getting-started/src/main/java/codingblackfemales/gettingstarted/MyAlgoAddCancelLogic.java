@@ -1,7 +1,6 @@
 package codingblackfemales.gettingstarted;
 
 import codingblackfemales.action.Action;
-import codingblackfemales.action.CancelChildOrder;
 import codingblackfemales.action.CreateChildOrder;
 import codingblackfemales.action.NoAction;
 import codingblackfemales.algo.AlgoLogic;
@@ -28,46 +27,28 @@ public class MyAlgoAddCancelLogic implements AlgoLogic {
 
         final BidLevel nearTouch = state.getBidAt(0); // Highest buy price - TopBook for BUY
         final AskLevel farTouch = state.getAskAt(0); // Lowest sell price - TopBook for ASK
+        long price = (nearTouch.price - (farTouch.price - nearTouch.price)); // JB: 1) workout spread 2) Take away from the highest bid price
         long targetQuantity = 300;
 
 
-        if (state.getChildOrders().size() < 2) {
-            if (state.getBidLevels() < 4) {
-                long price = nearTouch.price;
-                long quantity = targetQuantity / 4;
-                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 4, joining passive side of book" +
-                        " with: " + quantity + " @ " + price);
-                return new CreateChildOrder(Side.BUY, quantity, price);
-            }
-        }
-        final var activeOrders = state.getActiveChildOrders();
-        if(activeOrders.size() > 3){
-            final var option = activeOrders.stream().findFirst();
-            if (option.isPresent()) {
-                var childOrder = option.get();
-                logger.info("[MYALGO] Cancelling high price order:" + childOrder);
-                return new CancelChildOrder(childOrder);
-            }
-        }
-
-        if (state.getChildOrders().size() < 4) {
-            if (state.getBidLevels() < 5) {
-                long price = (nearTouch.price - (farTouch.price - nearTouch.price));
-                // JB: 1) workout spread 2) Take away from the highest bid price
+        if(state.getChildOrders().size() < 3){
+            if (price <= 98){
                 long quantity = targetQuantity / 2;
-                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 4, joining passive side of book" +
+                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
                         " with: " + quantity + " @ " + price);
                 return new CreateChildOrder(Side.BUY, quantity, price);
+            } else if (price > 98 && price < 105) {
+                long quantity = targetQuantity / 4;
+                logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, joining passive side of book" +
+                        " with: " + quantity + " @ " + price);
+                return new CreateChildOrder(Side.BUY, quantity, price);
+            } else {
+                return NoAction.NoAction;
             }
         } else {
-            logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children added, want 4, done.");
+            logger.info("[MYALGO] Have:" + state.getChildOrders().size() + " children, want 3, done.");
             return NoAction.NoAction;
         }
-        return NoAction.NoAction;
-    }
-}
-
-
 
 
         /******** My Thoughts
@@ -83,8 +64,8 @@ public class MyAlgoAddCancelLogic implements AlgoLogic {
          * Need to also make the quantity dynamic to reduce market impact movement
          */
 
-
-
+    }
+}
 /*
  ## Tips for my Passive Algo ##
         - Need to add a condition to cancel existing order if price moves away from current market; Would need to set a range

@@ -21,43 +21,46 @@ public class MyStretchBackTest extends AbstractAlgoBackTest {
 
     @Override
     public AlgoLogic createAlgoLogic() {
-        return new MyStretchLogic();
+        return new MyStretchLogic2();
     }
 
     @Test
     public void testExampleBackTest() throws Exception {
         //create a sample market data tick....
-        send(createTick8am());
-        send(createTick8_30am());
-        send(createTick9am());
-        send(createTick9_30am());
-        send(createTick10am());
-        send(createTick10_30am());
-        send(createTick11am());
-        send(createTick11_30am());
-        send(createTick12pm());
-        send(createTick12_30pm());
-        send(createTick1pm());
-        send(createTick1_30pm());
-        send(createTick2pm());
-        send(createTick2_30pm());
-        send(createTick3pm());
-        send(createTick3_30pm());
-        send(createTick4pm());
-
         //ADD asserts when you have implemented your algo logic
-        assertEquals(3, container.getState().getChildOrders().size());
+
 
         //when: market data moves towards us
-
 
         //then: get the state
         var state = container.getState();
 
+        send(createTick8am()); //1
+        send(createTick8_30am()); //2
+        send(createTick9am()); //3
+        send(createTick9_30am()); //4
+        send(createTick10am()); //5
+        send(createTick10_30am()); //6
+        send(createTick11am()); //7
+        send(createTick11_30am()); //8
+        send(createTick12pm()); //9
+        send(createTick12_30pm()); //10
+        send(createTick1pm()); //11
+        send(createTick1_30pm()); //12
+        send(createTick2pm()); //13
+        send(createTick2_30pm()); //14
+        send(createTick3pm()); //15
+        send(createTick3_30pm()); //16
+        send(createTick4pm()); //17
 
-//        MyStretchLogic v = new MyStretchLogic();
+        MyStretchLogic2 v = new MyStretchLogic2();
 //        v.vwap(state); // That works!
-//        v.postTradeAnalysis(state); // That works!
+        v.postTradeAnalysis(state); // That works!
+
+//        assertEquals(5, container.getState().getChildOrders().size());
+//        assertEquals(3, container.getState().getActiveChildOrders().size());
+
+
 
         //Check things like filled quantity, cancelled order count etc....
 //        long filledQuantity = state.getChildOrders().stream().map(ChildOrder::getFilledQuantity).reduce(Long::sum).get();
