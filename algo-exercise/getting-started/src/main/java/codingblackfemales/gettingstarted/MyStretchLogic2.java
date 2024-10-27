@@ -15,7 +15,9 @@ import messages.order.Side;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MyStretchLogic2 implements AlgoLogic {
@@ -26,8 +28,9 @@ public class MyStretchLogic2 implements AlgoLogic {
     long priceBuyThreshold = 99;
     long priceAskThreshold = 101;
     private final Map<Integer, Long> vwapTracker = new HashMap<>();
-    private int marketTickCounter = 0;
+    private int marketTickCounter = 0; // Might be the issue - Test 1
     int currentCount;
+    private final List<ChildOrder> completedOrders = new ArrayList<>(); // New list for complete orders
     /*
     ### Outstanding Tasks to complete
     Time : Work out why the orders are not being created properly using logs
@@ -52,13 +55,22 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
          */
         long vwapResult = vwap(state);
         vwapTracker.put(marketTickCounter, vwapResult); // Storing the Vwap against the market data tick iterations
-        logger.info("VWAP Result for Tick  " + marketTickCounter + ":" + vwapResult); // Place vwap info before the create and cancel order action
-        createOrdersConditions(state); // Want to create all orders first
-        String trackingMessage = trackOrders(state); // Start tracking active orders
-        logger.info(trackingMessage);
-        cancelOrderConditions(state); // Cancel active orders based on
-        return NoAction.NoAction; // Need this return, as if it doesn't go into the block above, then need to return ' no action'
+        logger.info("VWAP Result for Tick " + marketTickCounter + " is " + vwapResult); // Place vwap info before the create and cancel order action
+        logger.info("vwapTracker now has " + vwapTracker.size() + " entries");
 
+        Action creatOrderAction = createOrdersConditions(state); // Want to create all orders first
+        if (!(creatOrderAction instanceof NoAction)){
+            return creatOrderAction;
+        }
+
+        String trackingMessage = verifyingOrders(state); // Start tracking active orders
+        logger.info(trackingMessage);
+
+        Action cancelAction = cancelOrderConditions(state); // Cancel active orders based on
+        if (!(cancelAction instanceof NoAction)){
+            return cancelAction;
+        }
+        return NoAction.NoAction; // Need this return, as if it doesn't go into the block above, then need to return ' no action'
 }
 
     public long vwap(SimpleAlgoState state) //CBF - Intro to Financial Markets 2024_slide-26
@@ -123,54 +135,52 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
         final BidLevel nearTouch = state.getBidAt(0);
         final AskLevel farTouch = state.getAskAt(0);
         final long spreadPrice = farTouch.price - nearTouch.price;
-        if(spreadPrice >3&&nearTouch.getPrice() <priceBuyThreshold)
-        { // creating less competitive Buy orders
-            long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();
-            if (buyOrderCount < 2) {
-                {
-                    long price = (nearTouch.price - 2);// Want to be passive order, due to less competitive scenario
-                    long initialQuantity = 250;
-                    long chosenQuantity = lowestAskQOnBook(state);
-                    long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
-                    logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size() +
-                            " children, want 3, joining BUY side of book" +
-                            " with: " + quantity + " @ " + price);
-                    return new CreateChildOrder(Side.BUY, quantity, price);
+
+        if (state.getActiveChildOrders().size() < 3){
+            if(spreadPrice >3 && nearTouch.getPrice() <priceBuyThreshold)
+            { // creating less competitive Buy orders
+                long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();
+                if (buyOrderCount < 2) {
+                    {
+                        long price = (nearTouch.price - 2);// Want to be passive order, due to less competitive scenario
+                        long initialQuantity = 250;
+                        long chosenQuantity = lowestAskQOnBook(state);
+                        long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
+                        logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size() +
+                                " children, want 3, joining orderbook on BUY side (passive) with: " + quantity + " @ " + price);
+                        return new CreateChildOrder(Side.BUY, quantity, price);
+                    }
                 }
             }
-        }
 
-        if(spreadPrice< 2&&farTouch.getPrice()>=priceAskThreshold) // Something is wrong, no SELL order being made
-        { // Short position is risky, better to place order when book looks to be narrow
-            long sellOrderCount = state.getActiveChildOrders().stream()
-                    .filter(order -> order.getSide() == Side.SELL)
-                    .count();
-            if (sellOrderCount < 1) {
-                long price = farTouch.price - 1;
-                long quantity = 200;
+            if(spreadPrice< 3 && farTouch.getPrice()>=priceAskThreshold) // Something is wrong, no SELL order being made
+            { // Short position is risky, better to place order when book looks to be narrow
+                long sellOrderCount = state.getActiveChildOrders().stream()
+                        .filter(order -> order.getSide() == Side.SELL)
+                        .count();
+                if (sellOrderCount == 0) {
+                    long price = farTouch.price - 1;
+                    long quantity = 200;
 
-                logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size()
-                        + " children, want 3, joining passive side of book on ASK side" +
-                        " with: " + quantity + " @ " + price);
-                return new CreateChildOrder(Side.SELL, quantity, price);
-            }
-        } else if(spreadPrice< 3&&nearTouch.getPrice()<=priceBuyThreshold)
-        {
-            // Creating Aggressive BUY order
-            long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();
-            if (buyOrderCount < 1) // Might be an issue here
+                    logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size()
+                            + " children, want 3, joining orderbook on ASK side with: " + quantity + " @ " + price);
+                    return new CreateChildOrder(Side.SELL, quantity, price);
+                }
+            } else if(spreadPrice< 3 && nearTouch.getPrice()<=priceBuyThreshold)
             {
+                // Creating Aggressive BUY order
+                long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();
+                if (buyOrderCount < 1) // Might be an issue here
+                {
                     long price = nearTouch.price;
                     long initialQuantity = 100;
                     long chosenQuantity = lowestAskQOnBook(state);
                     long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
                     logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size() +
-                            " children, want 3, joining BUY side of book" +
-                            " with: " + quantity + " @ " + price);
-                    logger.info("[MY-STRETCH-ALGO]");
+                            " children, want 3, joining orderbook on BUY side with: " + quantity + " @ " + price);
                     return new CreateChildOrder(Side.BUY, quantity, price);
+                }
             }
-
         }
         return NoAction.NoAction;
     }
@@ -187,13 +197,20 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
         return comparisonVar;
     }
 
-    public String trackOrders(SimpleAlgoState state) {
-
+    public String verifyingOrders(SimpleAlgoState state) {
 
         StringBuilder message = new StringBuilder();
 
         for (ChildOrder order : state.getActiveChildOrders()) {
             long orderId = order.getOrderId();
+              if ((order.getQuantity() == order.getFilledQuantity())) {
+                  order.setState(OrderState.FILLED);
+                  orderIterationCount.remove(orderId); // Remove order from tracking after canceling
+                completedOrders.add(order); // Add order to 'completed list'
+                state.getActiveChildOrders().remove(order); // Remove from active orders list
+                message.append("[MY-STRETCH-ALGO] Removing ").append(order.getSide()).append(" order - ID:").append(order.getOrderId()).append(" from list, now completely filled.");
+            }
+
             if (!orderIterationCount.containsKey(orderId)) // If the order ID is not currently in HashMap list (-> Go into block)
             {
                 orderIterationCount.put(orderId, 1); // Start tracking the order
@@ -227,13 +244,6 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
                 orderIterationCount.remove(orderId); // Remove order from tracking after canceling
                 state.getActiveChildOrders().remove(orderId);
                 return new CancelChildOrder(order);
-            } else if ((order.getQuantity() == order.getFilledQuantity())) {
-                logger.info("[MY-STRETCH-ALGO] Removing Active " + order.getSide() + " order - ID:" + order.getOrderId() + " from list, now completely filled.");
-                orderIterationCount.remove(orderId); // Remove order from tracking after canceling
-                order.setState(OrderState.CANCELLED);
-//                state.getActiveChildOrders().remove(orderId);
-                new ChildOrder(order.getSide(), order.getOrderId(), order.getFilledQuantity(), order.getPrice(), order.getState());
-                return NoAction.NoAction;
             }
 
 //                // ### Cancel order after 5 iteriations ### #Todo - Problem here
@@ -277,25 +287,32 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
             {
                 StringBuilder summary = new StringBuilder();
 
-
                 state.getActiveChildOrders().forEach(order -> {
                     String orderSummary = String.format("Order ID: %d, Price: %d, Quantity: %d, Side of Book: %s, Quantity filled: %d",
-                            order.getOrderId(),
-                            order.getPrice(),
-                            order.getQuantity(),
-                            order.getSide(),
-                            order.getFilledQuantity());
+                            order.getOrderId(), order.getPrice(), order.getQuantity(), order.getSide(), order.getFilledQuantity());
                     logger.info((orderSummary));
 
                 });
+
+                // Capture completed orders
+                completedOrders.forEach(order -> {
+                    String orderSummary = String.format("Completed Order - ID: %d, Price: %d, Quantity: %d, Side: %s, Filled: %d",
+                            order.getOrderId(), order.getPrice(), order.getQuantity(), order.getSide(), order.getFilledQuantity());
+                    summary.append(orderSummary).append("\n");
+                    logger.info(orderSummary);
+                });
+
                 // Accumulated VWAP Result -> Need to store it in a HashMap somehow { Key: VWAP , Value: Iterations}
                 long averageVWAP = calculateAverageVWAP();
                 logger.info("Average VWAP across all ticks: " + averageVWAP); // #Todo: this variable appearing as '0.0'
                 return summary.toString();
+
+
             }
 
     private long calculateAverageVWAP() {
         if (vwapTracker.isEmpty()) {
+            logger.warn("VWAP Tracker is empty. No VWAP values to calculate average");
             return 0;
         }
         long totalVWAP = 0;
@@ -319,6 +336,7 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
          - Placed up top, so new child orders created doesn't get cancelled automatically
           Stream<ChildOrder> checkActiveO = state.getActiveChildOrders().stream();// Able to manipulate the orders without impacting the existing active order list
             - checkActiveO.forEach(a -> logger.info("This is my activeOrder output: " + a));
+            - new ChildOrder(order.getSide(), order.getOrderId(), order.getFilledQuantity(), order.getPrice(), order.getState());
     */
 
 
