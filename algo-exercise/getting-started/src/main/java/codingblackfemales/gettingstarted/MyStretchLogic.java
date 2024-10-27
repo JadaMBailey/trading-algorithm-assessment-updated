@@ -31,10 +31,10 @@ public class MyStretchLogic implements AlgoLogic {
     private int marketTickCounter = 0; // Might be the issue - Test 1
     int currentCount;
     private final List<ChildOrder> completedOrders = new ArrayList<>(); // New list for complete orders
+
     /*
     ### Outstanding Tasks to complete
     Time : Work out why the orders are not being created properly using logs
-Time : Work out why Average vwap is outputting '0'
 Time : Try to show which order has been matched
 Time : Commit changes once the above has been completed
 Time : Look into different algorithms to find the min value for OrderBook on either side :
@@ -43,6 +43,8 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
 
     @Override
     public Action evaluate(SimpleAlgoState state) {
+
+//       executedOrders = state.getChildOrders().stream().filter(order -> OrderState.FILLED).list();
 
         logger.info("[MY-STRETCH-ALGO] In Algo Logic....");
         var orderBookAsString = Util.orderBookToString(state);
@@ -58,13 +60,13 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
         logger.info("VWAP Result for Tick " + marketTickCounter + " is " + vwapResult); // Place vwap info before the create and cancel order action
         logger.info("vwapTracker now has " + vwapTracker.size() + " entries");
 
+        String trackingMessage = verifyingOrders(state); // Start tracking active orders
+        logger.info(trackingMessage);
+
         Action creatOrderAction = createOrdersConditions(state); // Want to create all orders first
         if (!(creatOrderAction instanceof NoAction)){
             return creatOrderAction;
         }
-
-        String trackingMessage = verifyingOrders(state); // Start tracking active orders
-        logger.info(trackingMessage);
 
         Action cancelAction = cancelOrderConditions(state); // Cancel active orders based on
         if (!(cancelAction instanceof NoAction)){
@@ -75,7 +77,6 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
 
     public long vwap(SimpleAlgoState state) //CBF - Intro to Financial Markets 2024_slide-26
     {
-//        logger.info("Testing Method - It looks like it has entered into this method");
         long totalPriceQuantityBids = 0;
         long totalQuantityBids = 0;
 
@@ -85,9 +86,6 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
         int bidLevels = state.getBidLevels();
         int askLevels = state.getAskLevels();
 
-        logger.info("Number of Bid Levels: " + bidLevels);// Comment out after logic fixed
-        logger.info("Number of Ask Levels: " + askLevels);// Comment out after logic fixed
-
         int i;
         long result = 0;
         for (i = 0; i <= Math.max(bidLevels, askLevels); i++) // This ensures all orders are taken into account even if
@@ -95,21 +93,17 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
             if (i < bidLevels){
                 BidLevel bidLevel = state.getBidAt(i);
                 if(bidLevel != null){
-//                    logger.info("Bid at index " + i + " has price: " + bidLevel.price + ", quantity: " + bidLevel.quantity);
-                    totalPriceQuantityBids += (bidLevel.price * bidLevel.quantity);
+                   totalPriceQuantityBids += (bidLevel.price * bidLevel.quantity);
                     totalQuantityBids += bidLevel.getQuantity();
                 } else {
                     logger.info("Bid at index " + i + " is null");
                 }
-//                totalPriceQuantityBids =+ (state.getBidAt(i).price * state.getBidAt(i).quantity);
-//                totalQuantityBids =+ state.getBidAt(i).getQuantity();
             }
 
             if (i < askLevels) {
                 AskLevel askLevel = state.getAskAt(i);
                 if (askLevel != null) {
-//                    logger.info("Ask at index " + i + " has price: " + askLevel.price + ", quantity: " + askLevel.quantity);
-                    totalPriceQuantityAsks += (askLevel.price * askLevel.quantity);
+                   totalPriceQuantityAsks += (askLevel.price * askLevel.quantity);
                     totalQuantityAsks += askLevel.getQuantity();
                 } else {
                     logger.info("Ask at index " + i + " is null");
@@ -119,9 +113,6 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
             long totalPriceQuantity = totalPriceQuantityBids + totalPriceQuantityAsks;
             long totalQuantity = totalQuantityBids + totalQuantityAsks;
 
-//            logger.info("Total Price-Quantity for Bids: " + totalPriceQuantityBids + ", Total Quantity for Bids: " + totalQuantityBids);
-//            logger.info("Total Price-Quantity for Asks: " + totalPriceQuantityAsks + ", Total Quantity for Asks: " + totalQuantityAsks);
-
             if (totalQuantity > 0) {
                 result =  totalPriceQuantity / totalQuantity;
             } else {
@@ -129,73 +120,6 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
             }
         }
         return result;
-    }
-
-    private Action createOrdersConditions(SimpleAlgoState state) {
-        // ### Creating Child Orders
-        final BidLevel nearTouch = state.getBidAt(0);
-        final AskLevel farTouch = state.getAskAt(0);
-        final long spreadPrice = farTouch.price - nearTouch.price;
-
-        if (state.getActiveChildOrders().size() < 3 ){ // || OrderState.FILLED == true
-            if(spreadPrice >3 && nearTouch.getPrice() <priceBuyThreshold)
-            { // creating less competitive Buy orders
-                long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();
-                if (buyOrderCount < 2) {
-                    {
-                        long price = (nearTouch.price - 2);// Want to be passive order, due to less competitive scenario
-                        long initialQuantity = 250;
-                        long chosenQuantity = lowestAskQOnBook(state);
-                        long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
-                        logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size() +
-                                " children, want 3, joining orderbook on BUY side (passive) with: " + quantity + " @ " + price);
-                        return new CreateChildOrder(Side.BUY, quantity, price);
-                    }
-                }
-            }
-
-            if(spreadPrice< 3 && farTouch.getPrice()>=priceAskThreshold) // Something is wrong, no SELL order being made
-            { // Short position is risky, better to place order when book looks to be narrow
-                long sellOrderCount = state.getActiveChildOrders().stream()
-                        .filter(order -> order.getSide() == Side.SELL)
-                        .count();
-                if (sellOrderCount == 0) {
-                    long price = farTouch.price - 1;
-                    long quantity = 200;
-
-                    logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size()
-                            + " children, want 3, joining orderbook on ASK side with: " + quantity + " @ " + price);
-                    return new CreateChildOrder(Side.SELL, quantity, price);
-                }
-            } else if(spreadPrice< 3 && nearTouch.getPrice()<=priceBuyThreshold)
-            {
-                // Creating Aggressive BUY order
-                long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();
-                if (buyOrderCount < 1) // Might be an issue here
-                {
-                    long price = nearTouch.price;
-                    long initialQuantity = 100;
-                    long chosenQuantity = lowestAskQOnBook(state);
-                    long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
-                    logger.info("[MY-STRETCH-ALGO] Have:" + state.getActiveChildOrders().size() +
-                            " children, want 3, joining orderbook on BUY side with: " + quantity + " @ " + price);
-                    return new CreateChildOrder(Side.BUY, quantity, price);
-                }
-            }
-        }
-        return NoAction.NoAction;
-    }
-
-    public long lowestAskQOnBook(SimpleAlgoState state) // Need rename this method
-    { // Will be using this loop for more than one order's logic
-        for (int i = 0; i < state.getAskLevels(); i++){
-            long askQuantity = state.getAskAt(i).quantity;
-            if (askQuantity < comparisonVar){
-                comparisonVar = askQuantity;
-            }
-        }
-        logger.info("Lowest Ask quantity found " + comparisonVar); // Self checking log that the quantity is correct
-        return comparisonVar;
     }
 
     public String verifyingOrders(SimpleAlgoState state) {
@@ -227,11 +151,82 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
         return message.toString();
     }
 
+    private Action createOrdersConditions(SimpleAlgoState state) {
+        // ### Creating Child Orders
+        final BidLevel nearTouch = state.getBidAt(0);
+        final AskLevel farTouch = state.getAskAt(0);
+        final long spreadPrice = farTouch.price - nearTouch.price;
+        var activeOrderTest = (state.getActiveChildOrders().stream().filter(order -> order.getFilledQuantity() < order.getQuantity())).count();
+
+        if (state.getActiveChildOrders().size() < 3 ){ // || OrderState.FILLED == true
+            if(spreadPrice > 2 && nearTouch.getPrice() <priceBuyThreshold)
+            { // creating less competitive Buy orders
+                long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();// count is an issue, need it to be size
+                if (buyOrderCount < 1)
+                {
+                        long price = (nearTouch.price - 1);// Want to be passive order, due to less competitive scenario
+                        long initialQuantity = 250;
+                        long chosenQuantity = lowestAskQOnBook(state);
+                        long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
+                       Action orderCreated = new CreateChildOrder(Side.BUY, quantity, price);
+                        logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderTest +
+                                " children, want 3, joining orderbook on BUY side (passive) with: " + quantity + " @ " + price);
+                        return orderCreated;
+                }
+            }
+
+            if(spreadPrice< 3 && farTouch.getPrice()>=priceAskThreshold) // Something is wrong, no SELL order being made
+            { // Short position is risky, better to place order when book looks to be narrow
+                long sellOrderCount = state.getActiveChildOrders().stream()
+                        .filter(order -> order.getSide() == Side.SELL)
+                        .count();
+                if (sellOrderCount == 0)
+                {
+                    activeOrderTest ++;
+                    long price = farTouch.price + 1;
+                    long quantity = 150;
+
+                    logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderTest
+                            + " children, want 3, joining orderbook on ASK side with: " + quantity + " @ " + price);
+                    return new CreateChildOrder(Side.SELL, quantity, price);
+                }
+            } else if(spreadPrice < 3 && nearTouch.getPrice()< priceBuyThreshold)
+            {
+                // Creating Aggressive BUY order
+                long buyOrderCount = state.getActiveChildOrders().stream().filter(order -> order.getSide() == Side.BUY).count();
+                if (buyOrderCount < 1) // Might be an issue here
+                {
+                    long price = nearTouch.price;
+                    long initialQuantity = 100;
+                    long chosenQuantity = lowestAskQOnBook(state);
+                    long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
+                    logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderTest +
+                            " children, want 3, joining orderbook on BUY side with: " + quantity + " @ " + price);
+                    return new CreateChildOrder(Side.BUY, quantity, price);
+                }
+            }
+        }
+        return NoAction.NoAction;
+    }
+
+    public long lowestAskQOnBook(SimpleAlgoState state) // Need rename this method
+    { // Will be using this loop for more than one order's logic
+        for (int i = 0; i < state.getAskLevels(); i++){
+            long askQuantity = state.getAskAt(i).quantity;
+            if (askQuantity < comparisonVar){
+                comparisonVar = askQuantity;
+            }
+        }
+        logger.info("Lowest Ask quantity found " + comparisonVar); // Self checking log that the quantity is correct
+        return comparisonVar;
+    }
+
+
     private Action cancelOrderConditions(SimpleAlgoState state) {
         for (ChildOrder order : state.getActiveChildOrders()) // Checking active orders are still relevant to be on the book
         {
 //            // Need to fix the cancelling Logic in 'MyStretchLogic' before adding here
-            int cancelLimit = 5;
+            int cancelLimit = 12;
             long orderId = order.getOrderId();
             // Cancel BUY order if the market moves after from sitting order
             if (order.getSide() == Side.BUY && order.getPrice() < minBuyBookPrice(state)) {
