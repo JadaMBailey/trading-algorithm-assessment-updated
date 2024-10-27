@@ -18,10 +18,10 @@ import static org.junit.Assert.assertEquals;
  *
  */
 public class MyStretchBackTest extends AbstractAlgoBackTest {
-    private MyStretchLogic2 myStretchLogic;
+    private MyStretchLogic myStretchLogic;
     @Override
     public AlgoLogic createAlgoLogic() {
-        myStretchLogic = new MyStretchLogic2();
+        myStretchLogic = new MyStretchLogic();
         return myStretchLogic;
     }
 
