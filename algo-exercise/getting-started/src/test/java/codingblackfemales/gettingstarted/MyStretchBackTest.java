@@ -18,10 +18,11 @@ import static org.junit.Assert.assertEquals;
  *
  */
 public class MyStretchBackTest extends AbstractAlgoBackTest {
-
+    private MyStretchLogic2 myStretchLogic;
     @Override
     public AlgoLogic createAlgoLogic() {
-        return new MyStretchLogic2();
+        myStretchLogic = new MyStretchLogic2();
+        return myStretchLogic;
     }
 
     @Test
@@ -53,9 +54,10 @@ public class MyStretchBackTest extends AbstractAlgoBackTest {
         send(createTick3_30pm()); //16
         send(createTick4pm()); //17
 
-        MyStretchLogic2 v = new MyStretchLogic2();
-//        v.vwap(state); // That works!
-        v.postTradeAnalysis(state); // That works!
+
+        myStretchLogic.postTradeAnalysis(state);
+
+
 
 //        assertEquals(5, container.getState().getChildOrders().size());
 //        assertEquals(3, container.getState().getActiveChildOrders().size());
