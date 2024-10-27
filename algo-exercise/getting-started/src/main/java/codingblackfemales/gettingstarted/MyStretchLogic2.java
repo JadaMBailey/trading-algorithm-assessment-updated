@@ -73,12 +73,13 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
         int bidLevels = state.getBidLevels();
         int askLevels = state.getAskLevels();
 
-        logger.info("Number of Bid Levels: " + bidLevels);
-        logger.info("Number of Ask Levels: " + askLevels);
+        logger.info("Number of Bid Levels: " + bidLevels);// Comment out after logic fixed
+        logger.info("Number of Ask Levels: " + askLevels);// Comment out after logic fixed
 
         int i;
         long result = 0;
-        for (i = 0; i <= Math.max(bidLevels, askLevels); i++){
+        for (i = 0; i <= Math.max(bidLevels, askLevels); i++) // This ensures all orders are taken into account even if
+        {
             if (i < bidLevels){
                 BidLevel bidLevel = state.getBidAt(i);
                 if(bidLevel != null){
