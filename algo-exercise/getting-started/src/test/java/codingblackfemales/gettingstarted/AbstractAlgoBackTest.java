@@ -72,14 +72,14 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
 
         encoder.bidBookCount(3)
                 .next().price(98L).size(380L)
-                .next().price(95L).size(260L)
-                .next().price(91L).size(650L);
+                .next().price(97L).size(260L)
+                .next().price(96L).size(650L);
 
         encoder.askBookCount(4)
-                .next().price(100L).size(561L)
-                .next().price(110L).size(204L)
-                .next().price(115L).size(560L)
-                .next().price(119L).size(620L);
+                .next().price(100L).size(532L)
+                .next().price(102L).size(304L)
+                .next().price(105L).size(570L)
+                .next().price(107L).size(220L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -104,15 +104,16 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
 
         encoder.bidBookCount(4)
                 .next().price(97L).size(140L)
-                .next().price(95L).size(240L)
-                .next().price(94L).size(205L)
-                .next().price(93L).size(603L);
+                .next().price(96L).size(240L)
+                .next().price(95L).size(205L)
+                .next().price(94L).size(603L);
 
-        encoder.askBookCount(4)
-                .next().price(98L).size(501L) // JB: Changed price from '98'
-                .next().price(99L).size(700L)
-                .next().price(100L).size(500L)
-                .next().price(103L).size(505L);
+        encoder.askBookCount(5)
+                .next().price(98L).size(501L)
+                .next().price(99L).size(200L)
+                .next().price(100L).size(250L)
+                .next().price(101L).size(50L)
+                .next().price(103L).size(305L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -136,7 +137,7 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.source(Source.STREAM);
 
         encoder.bidBookCount(3)
-                .next().price(96L).size(110L)
+                .next().price(97L).size(110L)
                 .next().price(95L).size(130L)
                 .next().price(94L).size(50L);
 
@@ -199,16 +200,20 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
-                .next().price(97L).size(100L)
-                .next().price(96L).size(290L)
-                .next().price(95L).size(280L);
+        encoder.bidBookCount(7)
+                .next().price(102L).size(150L)
+                .next().price(101L).size(205L)
+                .next().price(100L).size(240L)
+                .next().price(99L).size(220L)
+                .next().price(98L).size(500L)
+                .next().price(97L).size(370L)
+                .next().price(96L).size(680L);
 
         encoder.askBookCount(4)
-                .next().price(104L).size(501L)
-                .next().price(111L).size(230L)
-                .next().price(112L).size(520L)
-                .next().price(113L).size(550L);
+                .next().price(104L).size(301L)
+                .next().price(105L).size(230L)
+                .next().price(106L).size(320L)
+                .next().price(107L).size(450L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -231,16 +236,18 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
-                .next().price(99L).size(200L)
-                .next().price(96L).size(250L)
-                .next().price(94L).size(380L);
+        encoder.bidBookCount(5)
+                .next().price(100L).size(120L)
+                .next().price(99L).size(150L)
+                .next().price(98L).size(124L)
+                .next().price(97L).size(280L)
+                .next().price(96L).size(280L);
 
         encoder.askBookCount(4)
-                .next().price(100L).size(501L)
-                .next().price(101L).size(280L)
-                .next().price(102L).size(340L)
-                .next().price(103L).size(570L);
+                .next().price(101L).size(90L)
+                .next().price(100L).size(380L)
+                .next().price(99L).size(240L)
+                .next().price(98L).size(370L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -264,15 +271,15 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.source(Source.STREAM);
 
         encoder.bidBookCount(3)
-                .next().price(98L).size(200L)
-                .next().price(96L).size(250L)
-                .next().price(93L).size(380L);
+                .next().price(96L).size(200L)
+                .next().price(95L).size(250L)
+                .next().price(94L).size(380L);
 
         encoder.askBookCount(4)
-                .next().price(100L).size(501L)
-                .next().price(101L).size(205L)
-                .next().price(102L).size(540L)
-                .next().price(103L).size(660L);
+                .next().price(101L).size(101L)
+                .next().price(102L).size(205L)
+                .next().price(103L).size(240L)
+                .next().price(104L).size(60L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -295,16 +302,17 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
-                .next().price(99L).size(200L)
+        encoder.bidBookCount(4)
+                .next().price(99L).size(150L)
+                .next().price(98L).size(150L)
                 .next().price(97L).size(250L)
-                .next().price(93L).size(380L);
+                .next().price(96L).size(380L);
 
         encoder.askBookCount(4)
-                .next().price(100L).size(501L)
-                .next().price(101L).size(200L)
-                .next().price(102L).size(500L)
-                .next().price(103L).size(600L);
+                .next().price(100L).size(405L)
+                .next().price(101L).size(210L)
+                .next().price(102L).size(75L)
+                .next().price(103L).size(940L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -460,8 +468,8 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
 
         encoder.bidBookCount(3)
                 .next().price(99L).size(200L)
-                .next().price(86L).size(250L)
-                .next().price(83L).size(380L);
+                .next().price(96L).size(250L)
+                .next().price(95L).size(380L);
 
         encoder.askBookCount(4)
                 .next().price(100L).size(541L)
@@ -490,10 +498,12 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
+        encoder.bidBookCount(5)
                 .next().price(102L).size(200L)
-                .next().price(101L).size(50L)
-                .next().price(100L).size(400L);
+                .next().price(101L).size(250L)
+                .next().price(100L).size(350L)
+                .next().price(99L).size(500L)
+                .next().price(98L).size(100L);
 
         encoder.askBookCount(6)
                 .next().price(104L).size(210L)
@@ -526,14 +536,14 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
 
         encoder.bidBookCount(3)
                 .next().price(96L).size(200L)
-                .next().price(86L).size(250L)
-                .next().price(83L).size(380L);
+                .next().price(95L).size(250L)
+                .next().price(93L).size(80L);
 
         encoder.askBookCount(4)
                 .next().price(100L).size(501L)
                 .next().price(101L).size(250L)
-                .next().price(102L).size(530L)
-                .next().price(103L).size(604L);
+                .next().price(102L).size(230L)
+                .next().price(103L).size(304L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -559,13 +569,13 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.bidBookCount(3)
                 .next().price(99L).size(200L)
                 .next().price(96L).size(250L)
-                .next().price(94L).size(380L);
+                .next().price(95L).size(180L);
 
         encoder.askBookCount(4)
-                .next().price(101L).size(501L)
+                .next().price(101L).size(300L)
                 .next().price(102L).size(250L)
-                .next().price(104L).size(570L)
-                .next().price(106L).size(630L);
+                .next().price(104L).size(520L)
+                .next().price(106L).size(430L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 

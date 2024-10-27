@@ -31,6 +31,7 @@ public class MyStretchLogic implements AlgoLogic {
     private int marketTickCounter = 0; // Might be the issue - Test 1
     int currentCount;
     private final List<ChildOrder> completedOrders = new ArrayList<>(); // New list for complete orders
+
     /*
     ### Outstanding Tasks to complete
     Time : Work out why the orders are not being created properly using logs
@@ -43,6 +44,8 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
 
     @Override
     public Action evaluate(SimpleAlgoState state) {
+
+//       executedOrders = state.getChildOrders().stream().filter(order -> OrderState.FILLED).list();
 
         logger.info("[MY-STRETCH-ALGO] In Algo Logic....");
         var orderBookAsString = Util.orderBookToString(state);
