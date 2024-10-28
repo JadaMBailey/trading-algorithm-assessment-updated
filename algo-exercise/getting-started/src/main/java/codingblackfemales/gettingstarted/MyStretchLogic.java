@@ -62,16 +62,17 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
 
         String trackingMessage = verifyingOrders(state); // Start tracking active orders
         logger.info(trackingMessage);
-
+        logger.info("This is the size of my child order " + state.getChildOrders().size());
+        logger.info("This is the size of my active child order " + state.getActiveChildOrders().size());
         Action creatOrderAction = createOrdersConditions(state); // Want to create all orders first
         if (!(creatOrderAction instanceof NoAction)){
             return creatOrderAction;
         }
 
-        Action cancelAction = cancelOrderConditions(state); // Cancel active orders based on
-        if (!(cancelAction instanceof NoAction)){
-            return cancelAction;
-        }
+//        Action cancelAction = cancelOrderConditions(state); // Cancel active orders based on
+//            if (!(cancelAction instanceof NoAction)){
+//                return cancelAction;
+//            }
         return NoAction.NoAction; // Need this return, as if it doesn't go into the block above, then need to return ' no action'
     }
 
@@ -128,7 +129,7 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
 
         for (ChildOrder order : state.getActiveChildOrders()) {
             long orderId = order.getOrderId();
-            if ((order.getQuantity() == order.getFilledQuantity())) {
+            if ((order.getQuantity() == order.getFilledQuantity()) && !completedOrders.contains(order)) {
                 order.setState(OrderState.FILLED);
                 orderIterationCount.remove(orderId); // Remove order from tracking after canceling
                 completedOrders.add(order); // Add order to 'completed list'
@@ -156,7 +157,7 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
         final BidLevel nearTouch = state.getBidAt(0);
         final AskLevel farTouch = state.getAskAt(0);
         final long spreadPrice = farTouch.price - nearTouch.price;
-        var activeOrderTest = (state.getActiveChildOrders().stream().filter(order -> order.getFilledQuantity() < order.getQuantity())).count();
+        var activeOrderCount = (state.getActiveChildOrders().stream().filter(order -> order.getFilledQuantity() < order.getQuantity())).count();
 
         if (state.getActiveChildOrders().size() < 3 ){ // || OrderState.FILLED == true
             if(spreadPrice > 2 && nearTouch.getPrice() <priceBuyThreshold)
@@ -169,7 +170,7 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
                         long chosenQuantity = lowestAskQOnBook(state);
                         long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
                        Action orderCreated = new CreateChildOrder(Side.BUY, quantity, price);
-                        logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderTest +
+                        logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderCount +
                                 " children, want 3, joining orderbook on BUY side (passive) with: " + quantity + " @ " + price);
                         return orderCreated;
                 }
@@ -182,11 +183,11 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
                         .count();
                 if (sellOrderCount == 0)
                 {
-                    activeOrderTest ++;
+                    activeOrderCount ++;
                     long price = farTouch.price + 1;
                     long quantity = 150;
 
-                    logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderTest
+                    logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderCount
                             + " children, want 3, joining orderbook on ASK side with: " + quantity + " @ " + price);
                     return new CreateChildOrder(Side.SELL, quantity, price);
                 }
@@ -200,7 +201,7 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
                     long initialQuantity = 100;
                     long chosenQuantity = lowestAskQOnBook(state);
                     long quantity = Long.min(initialQuantity, chosenQuantity); // might have a large quantity from ask side, that isn't feasible for the client.
-                    logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderTest +
+                    logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderCount +
                             " children, want 3, joining orderbook on BUY side with: " + quantity + " @ " + price);
                     return new CreateChildOrder(Side.BUY, quantity, price);
                 }
@@ -235,10 +236,11 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
                 state.getActiveChildOrders().remove(orderId);
                 return new CancelChildOrder(order);
             } // Cancel SELL order if market moves after from sitting order
-            else if (order.getSide() == Side.SELL && order.getPrice() > maxAskBookPrice(state)) {
+            else if (order.getSide() == Side.SELL && order.getPrice() > maxAskBookPrice(state)) // This somehow cancelling the Buy type order
+            {
                 logger.info("[MY-STRETCH-ALGO] Cancelling ASK order ID:" + order.getOrderId() + ", as it is out of range with new market update");
                 orderIterationCount.remove(orderId); // Remove order from tracking after canceling
-                state.getActiveChildOrders().remove(orderId);
+//                state.getActiveChildOrders().remove(orderId);
                 return new CancelChildOrder(order);
             }
 
@@ -282,14 +284,16 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
     public String postTradeAnalysis (SimpleAlgoState state)
     {
         StringBuilder summary = new StringBuilder();
-
-        state.getActiveChildOrders().forEach(order -> {
-            String orderSummary = String.format("Order ID: %d, Price: %d, Quantity: %d, Side of Book: %s, Quantity filled: %d",
+        System.out.println();
+        logger.info("Post Trade Analysis");
+        state.getActiveChildOrders().stream()
+                .filter(order -> order.getState() != OrderState.FILLED)
+                .forEach(order -> {
+            String orderSummary = String.format("Active Order ID: %d, Price: %d, Quantity: %d, Side of Book: %s, Quantity filled: %d",
                     order.getOrderId(), order.getPrice(), order.getQuantity(), order.getSide(), order.getFilledQuantity());
             logger.info((orderSummary));
 
         });
-
         // Capture completed orders
         completedOrders.forEach(order -> {
             String orderSummary = String.format("Completed Order - ID: %d, Price: %d, Quantity: %d, Side: %s, Filled: %d",
