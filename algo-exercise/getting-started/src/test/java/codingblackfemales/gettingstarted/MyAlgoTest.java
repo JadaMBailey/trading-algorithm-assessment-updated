@@ -3,6 +3,8 @@ package codingblackfemales.gettingstarted;
 import codingblackfemales.algo.AlgoLogic;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * This test is designed to check your algo behavior in isolation of the order book.
@@ -27,9 +29,25 @@ public class MyAlgoTest extends AbstractAlgoTest {
     public void testDispatchThroughSequencer() throws Exception {
 
         //create a sample market data tick....
-        send(createTick());
 
         //simple assert to check we had 3 orders created
-        //assertEquals(container.getState().getChildOrders().size(), 3);
+        assertEquals(container.getState().getChildOrders().size(), 3);
     }
+
+    @Test
+    public void checkVwapFunction() throws Exception{
+
+    }
+
+    @Test
+    public void checkthatAnOrderCanBeCreated() throws Exception{
+        send(createTick8am());
+        send(createTick8_30am());
+        send(createTick8am());
+        send(createTick8am());
+        // container variable accessible
+        assertEquals(1,container.getState().getActiveChildOrders().size());
+    }
+
+
 }
