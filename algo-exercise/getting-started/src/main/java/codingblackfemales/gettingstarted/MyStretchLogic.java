@@ -62,18 +62,12 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
 
         String trackingMessage = verifyingOrders(state); // Start tracking active orders
         logger.info(trackingMessage);
-        logger.info("This is the size of my child order " + state.getChildOrders().size());
-        logger.info("This is the size of my active child order " + state.getActiveChildOrders().size());
+
         Action creatOrderAction = createOrdersConditions(state); // Want to create all orders first
         if (!(creatOrderAction instanceof NoAction)){
             return creatOrderAction;
         }
-
-//        Action cancelAction = cancelOrderConditions(state); // Cancel active orders based on
-//            if (!(cancelAction instanceof NoAction)){
-//                return cancelAction;
-//            }
-        return NoAction.NoAction; // Need this return, as if it doesn't go into the block above, then need to return ' no action'
+        return cancelOrderConditions(state);
     }
 
     public long vwap(SimpleAlgoState state) //CBF - Intro to Financial Markets 2024_slide-26
@@ -233,22 +227,19 @@ Time : Look into different algorithms to find the min value for OrderBook on eit
             if (order.getSide() == Side.BUY && order.getPrice() < minBuyBookPrice(state)) {
                 logger.info("[MY-STRETCH-ALGO] Cancelling BUY order ID:" + order.getOrderId() + ", as it is out of range with new market update");
                 orderIterationCount.remove(orderId); // Remove order from tracking after canceling
-                state.getActiveChildOrders().remove(orderId);
                 return new CancelChildOrder(order);
             } // Cancel SELL order if market moves after from sitting order
             else if (order.getSide() == Side.SELL && order.getPrice() > maxAskBookPrice(state)) // This somehow cancelling the Buy type order
             {
                 logger.info("[MY-STRETCH-ALGO] Cancelling ASK order ID:" + order.getOrderId() + ", as it is out of range with new market update");
                 orderIterationCount.remove(orderId); // Remove order from tracking after canceling
-//                state.getActiveChildOrders().remove(orderId);
                 return new CancelChildOrder(order);
             }
 
-//                // ### Cancel order after 5 iteriations ### #Todo - Problem here
+//                // ### Cancel order after 12 iteriations ### #Todo - Problem here
             if (currentCount >= cancelLimit) {
                 logger.info("[MY-STRETCH-ALGO] Cancelling order after 5 iterations: " + order);
                 orderIterationCount.remove(orderId); // Remove order from tracking after canceling
-                state.getActiveChildOrders().remove(orderId); // This line seems to work looking into logs
                 return new CancelChildOrder(order);  // Cancel the order after 5 iterations
             }
         }
