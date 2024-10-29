@@ -7,18 +7,28 @@ Each objective set has separate files to be accessed.
 - I have increase the ticks at 2.30pm to reflect the USA market open, and additionally increased the spread
 
 ## My Strategy
-- Cancel child order if it's activeOrder is moved away from the market
-- Try not to place child orders all at once
-- Need to create a post trade analysis displayed through teh logs
+- long vwapResult = vwap(state) -> Capture the vwap of market data for every iteration which is stored in a hashmap collection type
+-  String trackingMessage = trackOrderState(state) -> track active orders to review how long it has been present in orderbook which is stored in a hashmap collection type
+- Action creatOrderAction = createOrdersConditions(state) -> Create 1 buy and 1 sell order with a criteria of a narrow spread of 2, narrow spread would signal a competitive market
+  - Try not to place child orders all at once by separating the creation of Ask and Buy orders into separate conditional statements 
+- return cancelOrderConditions(state) -> Cancel child order if activeOrders has moved away from the market, so will return cancel Action or No Action
+-  myStretchLogic.postTradeAnalysis(state) -> created a post trade analysis which is displayed at the end of log output to reflect whether my trades have executed at the end of a trading day
+  - post Trade analysis is inputted when executing and cancelling of orders finish 
 
-if(activeChild < 3){
-    if(spread < 2){
+### Pseudocode 
+
+
+
+#### Create Child
+if(activeChild < 2){
+    if(buyMarketSpread < 3){
     price 
     quantity
-} else if(spread < 3)
+    return new ChildOrder(buy, price, quantity)
+    }
+    if(askMarketSpread < 3){
     price
-    quantity
-} else if (spread < 4){
-    price
-    quantity
+    quantity 
+    return new ChildOrder(sell, price, quantity)
+    }
 }
