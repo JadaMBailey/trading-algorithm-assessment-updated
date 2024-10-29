@@ -2,7 +2,7 @@ package codingblackfemales.gettingstarted;
 
 import codingblackfemales.algo.AlgoLogic;
 import org.junit.Test;
-import codingblackfemales.sotw.ChildOrder;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -18,24 +18,19 @@ import static org.junit.Assert.assertEquals;
  *
  */
 public class MyStretchBackTest extends AbstractAlgoBackTest {
-    private MyStretchLogic myStretchLogic;
+    private MyStretchLogic myStretchLogic; // Added class variable - 1
     @Override
     public AlgoLogic createAlgoLogic() {
-        myStretchLogic = new MyStretchLogic();
-        return myStretchLogic;
+        myStretchLogic = new MyStretchLogic(); // Assigned variable to create an object of 'MyStretchLogic' class - 2
+        return myStretchLogic; // Changed to return the variable instead of new object which was there originally - 3
     }
 
     @Test
-    public void testExampleBackTest() throws Exception {
-        //create a sample market data tick....
-        //ADD asserts when you have implemented your algo logic
-
-
-        //when: market data moves towards us
-
+    public void testBackTest() throws Exception {
         //then: get the state
         var state = container.getState();
 
+        //create a sample market data tick....
         send(createTick8am()); //1
         send(createTick8_30am()); //2
         send(createTick9am()); //3
@@ -54,15 +49,21 @@ public class MyStretchBackTest extends AbstractAlgoBackTest {
         send(createTick3_30pm()); //16
         send(createTick4pm()); //17
 
+        myStretchLogic.postTradeAnalysis(state); // Call post trade analysis method after all market data ticks have been actioned. - 4
 
-        myStretchLogic.postTradeAnalysis(state);
+
+
+
+
+
+
+
+
 
 
 
 //        assertEquals(5, container.getState().getChildOrders().size());
 //        assertEquals(3, container.getState().getActiveChildOrders().size());
-
-
 
         //Check things like filled quantity, cancelled order count etc....
 //        long filledQuantity = state.getChildOrders().stream().map(ChildOrder::getFilledQuantity).reduce(Long::sum).get();
