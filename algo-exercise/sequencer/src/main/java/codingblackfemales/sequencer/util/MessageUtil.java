@@ -19,10 +19,29 @@ public class MessageUtil {
     public static String bookUpdateToString(BookUpdateDecoder decoder){
 
         final StringBuilder builder = new StringBuilder();
+        builder.append(padLeft("|----ASK-----", 12) + "|"  + "\n");
+
+        final BookUpdateDecoder.AskBookDecoder askBookDecoder = decoder.askBook();
+
+        int maxLevels = askBookDecoder.count();
+
+        for(int i=0; i<maxLevels; i++) {
+
+            if (askBookDecoder.hasNext()) {
+                BookUpdateDecoder.AskBookDecoder a = askBookDecoder.next();
+                long size = a.size();
+                long price = a.price();
+                builder.append(padLeft(size + " @ " + price, 12));
+            } else {
+                builder.append(padLeft(" - ", 12) + "");
+            }
+
+            builder.append("\n");
+        }
 
         final BookUpdateDecoder.BidBookDecoder bidBookDecoder = decoder.bidBook();
 
-        int maxLevels = bidBookDecoder.count();// Math.max(askBookDecoder.count(), bidBookDecoder.count());
+        maxLevels = bidBookDecoder.count();// Math.max(askBookDecoder.count(), bidBookDecoder.count());
 
         builder.append(padLeft("|----BID-----", 12) + "|" + "\n");
 
@@ -41,25 +60,7 @@ public class MessageUtil {
 
         }
 
-        builder.append(padLeft("|----ASK-----", 12) + "|"  + "\n");
 
-        final BookUpdateDecoder.AskBookDecoder askBookDecoder = decoder.askBook();
-
-         maxLevels = askBookDecoder.count();
-
-        for(int i=0; i<maxLevels; i++) {
-
-            if (askBookDecoder.hasNext()) {
-                BookUpdateDecoder.AskBookDecoder a = askBookDecoder.next();
-                long size = a.size();
-                long price = a.price();
-                builder.append(padLeft(size + " @ " + price, 12));
-            } else {
-                builder.append(padLeft(" - ", 12) + "");
-            }
-
-            builder.append("\n");
-        }
 
         return builder.toString();
     }
