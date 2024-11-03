@@ -27,15 +27,24 @@ public class MyAlgoTest extends AbstractAlgoTest {
 
     @Test
     public void testDispatchThroughSequencer() throws Exception {
-
+        send(createTick8am());
+        send(createTick8_30am());
+        send(createTick8am());
+        send(createTick8am());
         //create a sample market data tick....
 
         //simple assert to check we had 3 orders created
-        assertEquals(container.getState().getChildOrders().size(), 3);
+        assertEquals(1, container.getState().getChildOrders().size());
     }
 
     @Test
     public void checkVwapFunction() throws Exception{
+
+    }
+
+    @Test
+    public void checkOrderTracked() throws Exception{
+
 
     }
 
@@ -49,5 +58,10 @@ public class MyAlgoTest extends AbstractAlgoTest {
         assertEquals(1,container.getState().getActiveChildOrders().size());
     }
 
+    @Test
+    public void lowAskQuantity() throws Exception{
+        // I want to see that I am receiving the lowest quantity
+        
+    }
 
 }

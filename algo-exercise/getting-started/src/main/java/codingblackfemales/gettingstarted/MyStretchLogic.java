@@ -45,9 +45,9 @@ public class MyStretchLogic implements AlgoLogic {
         String trackingMessage = trackOrderState(state);
         logger.info(trackingMessage);
         // criteria to create orders first
-        Action creatOrderCondition = createOrdersConditions(state);
-        if ((creatOrderCondition instanceof CreateChildOrder)){
-            return creatOrderCondition;
+        Action createOrderCondition = createOrdersConditions(state);
+        if ((createOrderCondition instanceof CreateChildOrder)){
+            return createOrderCondition;
         } else {
             // criteria to cancel orders
             return cancelOrderConditions(state);
