@@ -1,68 +1,90 @@
-# ReadMe
-This readMe has been included to provide easy navigation to the files, and what to expect.
-Each objective set has separate files to be accessed.
+# Trading Algorithm Implementation
 
-## Market Data
-- There has been 17 market data ticks created (1 marketTick = 30 mins) #Todo
-- I have increase the ticks at 2.30pm to reflect the USA market open, and additionally increased the spread
+## Overview
+This document outlines my implementation of a trading algorithm that creates and manages orders based on market conditions.
 
-## My Strategy Flow
-My conditions in order to create an order is dependent on a narrow spread of the topbook orders and the top order at that current state is below the price limit set. 
+## Market Data Structure
+- Market data is divided into 17 ticks (1 tick = 30 minutes)
+- Enhanced volatility at 2:30 PM (EST) to reflect US market open
+- Increased spread during high volatility periods
 
+## Trading Strategy
+My algorithm implements the following strategy flow:
 
-![img.png](img.png)
+### Core Components
+1. **VWAP Calculation**
+   - `vwap(state)`: Calculates Volume Weighted Average Price
+   - Stored in HashMap for historical reference
 
-- long vwapResult = vwap(state) -> Capture the vwap of market data for every iteration which is stored in a hashmap collection type
--  String trackingMessage = trackOrderState(state) -> track active orders to review how long it has been present in orderbook which is stored in a hashmap collection type
-- Action creatOrderAction = createOrdersConditions(state) -> Create 1 buy and 1 sell order with a criteria of a narrow spread of 2, narrow spread would signal a competitive market
-  - Try not to place child orders all at once by separating the creation of Ask and Buy orders into separate conditional statements 
-- return cancelOrderConditions(state) -> Cancel child order if activeOrders has moved away from the market, so will return cancel Action or No Action
--  myStretchLogic.postTradeAnalysis(state) -> created a post trade analysis which is displayed at the end of log output to reflect whether my trades have executed at the end of a trading day
-  - post Trade analysis is inputted when executing and cancelling of orders finish 
+2. **Order State Tracking**
+   - `trackOrderState(state)`: Monitors active orders duration
+   - Maintains order history in HashMap
 
+3. **Order Creation Logic**
+   - `createOrdersConditions(state)`: Generates buy/sell orders
+   - Key criteria: Spread must be < 2 (indicating competitive market)
+   - Staggers order placement between buy and sell sides
 
+4. **Order Management**
+   - `cancelOrderConditions(state)`: Monitors and cancels stale orders
+   - Implements price deviation thresholds
 
-### Pseudocode 
+5. **Post-Trade Analysis**
+   - `postTradeAnalysis(state)`: End-of-day performance metrics
+   - Tracks execution quality and P&L
 
+![Trading Strategy Flow](img.png)
 
-
-#### Create Child
-if(activeChild < 2){
-    if(buyMarketSpread < 3){
-    price 
-    quantity
-    return new ChildOrder(buy, price, quantity)
+### Order Creation Pseudocode
+```java
+if (activeOrders <= 2) {
+    if (spreadPrice < 3 && nearTouchPrice < buyPriceLimit) {
+        // Check for existing BUY orders
+        if (activeBuyOrders < 1 && completedBuyOrders == 0) {
+            setPrice = nearTouchPrice - 1
+            initialQuantity = 100
+            chosenQuantity = getLowestAskQuantityOnBook()
+            setQuantity = min(initialQuantity, chosenQuantity)
+            return new ChildOrder(BUY, setQuantity, setPrice)
+        }
     }
-    if(askMarketSpread < 3){
-    price
-    quantity 
-    return new ChildOrder(sell, price, quantity)
+
+    if (spreadPrice < 3 && farTouchPrice > askPriceLimit + 1) {
+        // Check for existing SELL orders
+        if (activeSellOrders < 1 && completedSellOrders == 0) {
+            setPrice = farTouchPrice - 1
+            setQuantity = 100
+            return new ChildOrder(SELL, setQuantity, setPrice)
+        }
     }
 }
+return NoAction
+```
 
-## Understanding the log outputs
-### The Logging Consumer will output the following 
-- The current Orderbook state
-- Displays reference to my orders placed
-  - Orders that I have been created to be added to the Orderbook
-  - Orders that have been filled 
-  - Orders that have been cancelled 
+Key Features:
+- Limits total active orders to 2
+- Requires spread < 3 for order creation
+- Implements price limits for both buy and sell sides
+- Prevents duplicate orders on same side
+- Manages quantity based on market conditions for buy orders
+- Tracks completed orders to prevent over-trading
 
-### Removing, adding and matching Makret Data (OrderBook)
-- After processing Mkt Data log output
-- It looks to remove existing market data if present
-- It then looks to add or match my order against the current market data
-  - try to match order first
-  - Then if not successful add onto the orderbook
+## Logging and Monitoring
+The system provides detailed logging of:
+- Current orderbook state
+- Order lifecycle events (creation, fills, cancellations)
+- Market data processing
+- Order matching attempts
 
-### fLOW
-- The current Orderbook state
-- 'Processing Mkt Data Update' log out correlates with eack market data tick of the above orderbook output 
-- MarketDataService.onBookUpdate : lists out each market data order
-- After an action type is chosen in the evaluate method in my logic, it then sents the action type to runAlgoLogic() within the AlgoContainer class.
-- If the action type is not 'NoAction' then it goes to processAction in Action class
-  - For create a child order : CreateChildOrder.apply() -> 
-### What I want to implement
-- Add another cancellation logic that reflects a stop loss measure put in place
-- Modify and add the overall condition for creating orders to factor in orders that have been completed
-  - Potentially will be able to remove the inner child limit condition 
+## Market Data Processing Flow
+1. Orderbook state evaluation
+2. Market data tick processing
+3. Order matching attempts
+4. Order placement/updates
+
+## Future Enhancements
+1. Implement stop-loss mechanisms
+2. Enhanced order creation logic based on execution history
+3. Dynamic child order limit adjustments
+
+
