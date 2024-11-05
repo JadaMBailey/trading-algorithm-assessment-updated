@@ -49,12 +49,17 @@ public class SimpleAlgoStateImpl implements SimpleAlgoState {
     }
 
     @Override
+    // This method provides a full list of all orders, including cancelled and filled ones
     public List<ChildOrder> getChildOrders() {
         return orderService.children();
     }
 
     @Override
     public List<ChildOrder> getActiveChildOrders() {
-        return orderService.children().stream().filter(order -> order.getState() != OrderState.CANCELLED).collect(Collectors.toList());
+        return orderService.children().stream()
+               .filter(order -> order.getState() != OrderState.CANCELLED 
+                            && order.getState() != OrderState.FILLED)
+               .collect(Collectors.toList());
     }
+    // Added the extra condition to exclude filled orders after reviewing the log output
 }
