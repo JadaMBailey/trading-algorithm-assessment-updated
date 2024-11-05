@@ -18,10 +18,10 @@ import static org.junit.Assert.assertEquals;
  *
  */
 public class MyStretchBackTest extends AbstractAlgoBackTest {
-    private MyStretchLogic myStretchLogic; // Added class variable - 1
+    private MyAlgoLogic myStretchLogic; // Added class variable - 1
     @Override
     public AlgoLogic createAlgoLogic() {
-        myStretchLogic = new MyStretchLogic(); // Assigned variable to create an object of 'MyStretchLogic' class - 2
+        myStretchLogic = new MyAlgoLogic(); // Assigned variable to create an object of 'MyStretchLogic' class - 2
         return myStretchLogic; // Changed to return the variable instead of new object which was there originally - 3
     }
 
