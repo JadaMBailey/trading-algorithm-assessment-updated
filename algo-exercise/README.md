@@ -102,3 +102,28 @@ Please see, if you're unsure how to run maven in your setup:
 * (https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
 * (https://www.jetbrains.com/help/idea/maven-support.html)
 * (https://code.visualstudio.com/docs/java/java-build#_execute-maven-commands-and-goals)
+
+### How to Submit your code
+
+On your fork, once you are ready to finally submit the code, tag your work with the tag final_submission.
+
+```
+git tag -a final_submission -m "Final submission for Algo Assessment"
+```
+confirm that the tag has been created
+
+```
+git tag
+```
+and it should show the tag final_submission in the list. You can also see the details of the commit using 
+
+```
+git show final_submission
+```
+finally push the tag 
+```
+git push origin final_submission
+```
+Then share the link to your tag in the fork before the submission deadline with CBF team.
+
+for eg: https://github.com/cbfacademy/trading-algorithm-assessment/releases/tag/v1.0
