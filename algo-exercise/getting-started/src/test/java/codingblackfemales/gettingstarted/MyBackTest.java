@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
  * If you cancel the order your child order will show the order status as cancelled in the childOrders of the state object.
  *
  */
-public class MyStretchBackTest extends AbstractAlgoBackTest {
+public class MyBackTest extends AbstractAlgoBackTest {
     private MyAlgoLogic myStretchLogic; // Added class variable - 1
     @Override
     public AlgoLogic createAlgoLogic() {
