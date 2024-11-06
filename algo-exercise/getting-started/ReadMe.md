@@ -12,10 +12,10 @@ My algorithm implements the following strategy flow:
 ### Core Components
 1. **VWAP Calculation**
    - `vwap(state)`: Calculates Volume Weighted Average Price
-   - Stored in HashMap for historical reference
+   - Stored in HashMap for historical reference linked to iteration
 
 2. **Order State Tracking**
-   - `trackOrderState(state)`: Monitors active orders duration
+   - `trackOrderState(state)`: Monitors active orders duration within the Order book
    - Maintains order history in HashMap
 
 3. **Order Creation Logic**
@@ -73,12 +73,6 @@ The system provides detailed logging of:
 - Order lifecycle events (creation, fills, cancellations)
 - Market data processing
 - Order matching attempts
-
-## Market Data Processing Flow
-1. Orderbook state evaluation
-2. Market data tick processing
-3. Order matching attempts
-4. Order placement/updates
 
 ## Future Enhancements
 1. Implement stop-loss mechanisms by recording and comparing previous market condition to predict next direction of instrument

@@ -18,11 +18,11 @@ import static org.junit.Assert.assertEquals;
  *
  */
 public class MyBackTest extends AbstractAlgoBackTest {
-    private MyAlgoLogic myStretchLogic; // Added class variable - 1
+    private MyAlgoLogic myAlgoLogic; // Added class variable - 1
     @Override
     public AlgoLogic createAlgoLogic() {
-        myStretchLogic = new MyAlgoLogic(); // Assigned variable to create an object of 'MyStretchLogic' class - 2
-        return myStretchLogic; // Changed to return the variable instead of new object which was there originally - 3
+        myAlgoLogic = new MyAlgoLogic(); // Assigned variable to create an object of 'MyStretchLogic' class - 2
+        return myAlgoLogic; // Changed to return the variable instead of new object which was there originally - 3
     }
 
     @Test
@@ -49,26 +49,8 @@ public class MyBackTest extends AbstractAlgoBackTest {
         send(createTick3_30pm()); //16
         send(createTick4pm()); //17
 
-        myStretchLogic.postTradeAnalysis(state); // Call post trade analysis method after all market data ticks have been actioned. - 4
+        myAlgoLogic.postTradeAnalysis(state); // Call post trade analysis method after all market data ticks have been actioned. - 4
 
-
-
-
-
-
-
-
-
-
-
-
-//        assertEquals(5, container.getState().getChildOrders().size());
-//        assertEquals(3, container.getState().getActiveChildOrders().size());
-
-        //Check things like filled quantity, cancelled order count etc....
-//        long filledQuantity = state.getChildOrders().stream().map(ChildOrder::getFilledQuantity).reduce(Long::sum).get();
-//        //and: check that our algo state was updated to reflect our fills when the market data
-//        assertEquals(400, filledQuantity);
     }
 
 }

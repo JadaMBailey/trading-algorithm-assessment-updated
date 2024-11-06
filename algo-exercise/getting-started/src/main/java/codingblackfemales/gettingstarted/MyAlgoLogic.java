@@ -27,8 +27,9 @@ public class MyAlgoLogic implements AlgoLogic {
     private static final Logger logger = LoggerFactory.getLogger(MyAlgoLogic.class);
     private final Map<Long, Integer> orderIterationCount = new HashMap<>(); // tracks order through OrderBook linked to iteration
     private final Map<Integer, Long> vwapTracker = new HashMap<>(); // tracks and stores vwap of each market tick method linked to iteration
+    private int marketTickCounter = 0; // Parameter used within 'vwapTracker' to track iteration
     private final List<ChildOrder> completedOrders = new ArrayList<>(); // New list for complete orders
-    private int marketTickCounter = 0;
+
     @Override
     public Action evaluate(SimpleAlgoState state) {
 
@@ -118,7 +119,6 @@ public class MyAlgoLogic implements AlgoLogic {
             if (completedOrders.contains(order)) {
                 ordersToRemove.add(order);
                 logger.info("[MY-STRETCH-ALGO] Removing already completed order ID: " + order.getOrderId());
-                continue;
             }
         }
         
@@ -196,7 +196,7 @@ public class MyAlgoLogic implements AlgoLogic {
                 }
             }
 
-            if(spreadPrice < 3 && farTouch.getPrice() > (askPriceLimit + 1)) {
+            if(spreadPrice < 3 && farTouch.getPrice() > (askPriceLimit)) {
                 // Check if we've already had a completed SELL order
                 long completedSellOrders = completedOrders.stream()
                         .filter(order -> order.getSide() == Side.SELL)
@@ -208,7 +208,7 @@ public class MyAlgoLogic implements AlgoLogic {
 
                 if (sellOrderCount < 1 && completedSellOrders == 0) {
                     activeOrderCount++;
-                    long price = (farTouch.price - 1);
+                    long price = farTouch.price;
                     long quantity = 100;
 
                     logger.info("[MY-STRETCH-ALGO] Have:" + activeOrderCount
@@ -229,7 +229,7 @@ public class MyAlgoLogic implements AlgoLogic {
                 comparisonVar = askQuantity;
             }
         }
-        logger.info("Lowest Ask quantity found " + comparisonVar); // Self checking log that the quantity is correct
+//        logger.info("Lowest Ask quantity found " + comparisonVar); // Self checking log that the quantity is correct
         return comparisonVar;
     }
 
@@ -267,7 +267,7 @@ public class MyAlgoLogic implements AlgoLogic {
                 chosenPrice = buyPrice;
             }
         }
-        logger.info("Lowest Buy price to compare against is " + chosenPrice);
+//        logger.info("Lowest Buy price to compare against is " + chosenPrice); // Self checking log that the price is correct
         return chosenPrice;
     }
 
@@ -300,7 +300,7 @@ public class MyAlgoLogic implements AlgoLogic {
                         boolean beatsAverage = (order.getSide() == Side.BUY && order.getPrice() <= averageVWAP)||
                                 (order.getSide() == Side.SELL && order.getPrice() >= averageVWAP);
 
-                        // Ternary operator for BUy or Sell to compare against beatsAverage variable
+                        // Ternary operator for Buy or Sell to compare against beatsAverage variable
                         orderSummary += beatsAverage ? " Beats Average VWAP" : " Below Average VWAP";
                     } else {
                         orderSummary += " No VWAP Comparison, as order is not filled.";
@@ -318,8 +318,6 @@ public class MyAlgoLogic implements AlgoLogic {
             logger.info(orderSummary);
             summary.append(orderSummary).append("\n");
         });
-
-        // Accumulated VWAP Result -> Need to store it in a HashMap somehow { Key: VWAP , Value: Iterations}
 
         logger.info("Average price of this trading day: " + averageVWAP);
         System.out.println();
