@@ -70,9 +70,8 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
+        encoder.bidBookCount(2)
                 .next().price(98L).size(380L)
-                .next().price(97L).size(260L)
                 .next().price(96L).size(650L);
 
         encoder.askBookCount(3)
@@ -101,15 +100,14 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(4)
+        encoder.bidBookCount(5)
+                .next().price(101L).size(200L)
+                .next().price(99L).size(301L)
                 .next().price(98L).size(140L)
-                .next().price(97L).size(240L)
                 .next().price(96L).size(205L)
                 .next().price(95L).size(603L);
 
-        encoder.askBookCount(5)
-                .next().price(99L).size(301L)
-                .next().price(101L).size(200L)
+        encoder.askBookCount(3)
                 .next().price(102L).size(250L)
                 .next().price(103L).size(75L)
                 .next().price(104L).size(305L);
@@ -138,7 +136,7 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.bidBookCount(4)
                 .next().price(101L).size(310L)
                 .next().price(99L).size(130L)
-                .next().price(97L).size(130L)
+                .next().price(98L).size(130L)
                 .next().price(95L).size(90L);
 
         encoder.askBookCount(3)
@@ -198,13 +196,12 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(7)
+        encoder.bidBookCount(6)
                 .next().price(104L).size(250L)
                 .next().price(101L).size(205L)
                 .next().price(100L).size(240L)
                 .next().price(99L).size(220L)
                 .next().price(98L).size(500L)
-                .next().price(97L).size(370L)
                 .next().price(96L).size(680L);
 
         encoder.askBookCount(3)
@@ -237,8 +234,8 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
                 .next().price(100L).size(120L)
                 .next().price(99L).size(150L)
                 .next().price(98L).size(124L)
-                .next().price(97L).size(280L)
-                .next().price(96L).size(280L);
+                .next().price(96L).size(280L)
+                .next().price(95L).size(180L);
 
         encoder.askBookCount(4)
                 .next().price(103L).size(90L)
@@ -334,13 +331,14 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(3)
-                .next().price(96L).size(250L)
-                .next().price(95L).size(250L)
-                .next().price(94L).size(380L);
+        encoder.bidBookCount(4)
+                .next().price(93L).size(250L)
+                .next().price(92L).size(250L)
+                .next().price(91L).size(250L)
+                .next().price(90L).size(380L);
 
         encoder.askBookCount(4)
-                .next().price(97L).size(505L)
+                .next().price(97L).size(200L)
                 .next().price(101L).size(200L)
                 .next().price(102L).size(500L)
                 .next().price(103L).size(600L);
@@ -367,16 +365,16 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.source(Source.STREAM);
 
         encoder.bidBookCount(4)
-                .next().price(102L).size(200L)
+                .next().price(102L).size(500L)
                 .next().price(101L).size(250L)
                 .next().price(99L).size(280L)
                 .next().price(98L).size(380L);
 
         encoder.askBookCount(4)
-                .next().price(100L).size(501L)
-                .next().price(101L).size(240L)
-                .next().price(102L).size(560L)
-                .next().price(103L).size(604L);
+                .next().price(103L).size(560L)
+                .next().price(104L).size(560L)
+                .next().price(105L).size(560L)
+                .next().price(106L).size(604L);
 
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
@@ -401,7 +399,7 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.source(Source.STREAM);
 
         encoder.bidBookCount(3)
-                .next().price(101L).size(265L)
+                .next().price(102L).size(465L)
                 .next().price(100L).size(245L)
                 .next().price(98L).size(180L);
 
@@ -535,18 +533,16 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.instrumentId(123L);
         encoder.source(Source.STREAM);
 
-        encoder.bidBookCount(5)
-                .next().price(103L).size(200L)
-                .next().price(101L).size(750L)
-                .next().price(99L).size(350L)
-                .next().price(97L).size(150L)
-                .next().price(96L).size(80L);
+        encoder.bidBookCount(4)
+                .next().price(96L).size(190L)
+                .next().price(95L).size(220L)
+                .next().price(94L).size(155L)
+                .next().price(93L).size(80L);
 
-        encoder.askBookCount(4)
-                .next().price(104L).size(630L)
-                .next().price(105L).size(530L)
-                .next().price(106L).size(435L)
-                .next().price(107L).size(304L);
+        encoder.askBookCount(3)
+                .next().price(99L).size(635L)
+                .next().price(100L).size(530L)
+                .next().price(101L).size(301L);
 
         encoder.instrumentStatus(InstrumentStatus.CONTINUOUS);
 
@@ -570,12 +566,12 @@ public abstract class AbstractAlgoBackTest extends SequencerTestCase {
         encoder.source(Source.STREAM);
 
         encoder.bidBookCount(3)
-                .next().price(99L).size(200L)
+                .next().price(100L).size(200L)
                 .next().price(96L).size(250L)
                 .next().price(95L).size(180L);
 
         encoder.askBookCount(4)
-                .next().price(101L).size(300L)
+                .next().price(102L).size(300L)
                 .next().price(102L).size(250L)
                 .next().price(104L).size(520L)
                 .next().price(106L).size(430L);
