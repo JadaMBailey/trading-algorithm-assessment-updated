@@ -138,7 +138,7 @@ public class MyAlgoLogic implements AlgoLogic {
                 message.append("[MY-STRETCH-ALGO] Removing ").append(order.getSide())
                       .append(" order - ID:").append(orderId)
                       .append(" from list, now completely filled.\n");
-                continue;
+
             }
             
             // Only track orders that aren't being removed
@@ -155,10 +155,10 @@ public class MyAlgoLogic implements AlgoLogic {
             }
         }
         
-        // Remove all orders marked for removal
+        // Remove orders from list that have been 'FILLED'
         if (!ordersToRemove.isEmpty()) {
             state.getActiveChildOrders().removeAll(ordersToRemove);
-            logger.info("[MY-STRETCH-ALGO] Removed " + ordersToRemove.size() + " order(s) from active orders");
+            logger.info("[MY-STRETCH-ALGO] Removed " + ordersToRemove.size() + " order(s) from active tracking");
         }
         
         return message.toString();
@@ -172,15 +172,15 @@ public class MyAlgoLogic implements AlgoLogic {
         long activeOrderCount = state.getActiveChildOrders().stream()
                 .filter(order -> order.getFilledQuantity() < order.getQuantity())
                 .count();
-            
-        if (activeOrderCount <= 2) 
+//
+        if (activeOrderCount <= 2)
         {
             if(spreadPrice < 3 && nearTouch.getPrice() < buyPriceLimit) {
                 // Check if we've already had a completed BUY order
                 long completedBuyOrders = completedOrders.stream()
                         .filter(order -> order.getSide() == Side.BUY)
                         .count();
-                
+
                 long buyOrderCount = state.getActiveChildOrders().stream()
                         .filter(order -> order.getSide() == Side.BUY)
                         .count();
@@ -279,7 +279,7 @@ public class MyAlgoLogic implements AlgoLogic {
                 lowestValue = maxAskPrice;
             }
         }
-        return lowestValue;
+        return lowestValue;// returns the highest ask price at current state
     }
 
     public String postTradeAnalysis (SimpleAlgoState state)
